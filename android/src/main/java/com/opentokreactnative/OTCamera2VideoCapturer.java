@@ -703,7 +703,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
             /* discard cameras that don't face the right direction */
             if (lensDirection == info.get(CameraCharacteristics.LENS_FACING)) {
                 // log.d("selectCamera() Direction the camera faces relative to device screen: "
-                        + info.get(CameraCharacteristics.LENS_FACING));
+                        // + info.get(CameraCharacteristics.LENS_FACING));
                 return id;
             }
         }
