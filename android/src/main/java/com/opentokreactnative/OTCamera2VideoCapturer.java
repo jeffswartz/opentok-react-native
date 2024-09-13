@@ -60,7 +60,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
     CameraCaptureSession captureSession;
     private CameraInfoCache cameraInfoCache;
     CameraState cameraState;
-    private final Display display;
+    private Display display;
     private DisplayOrientationCache displayOrientationCache;
     private int cameraIndex;
     private final Size frameDimensions;
