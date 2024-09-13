@@ -11,6 +11,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.display.DisplayManager;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
@@ -295,7 +296,11 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                                 Publisher.CameraCaptureFrameRate fps) {
         cameraManager = (CameraManager) ctx.getSystemService(Context.CAMERA_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            display = ctx.getDisplay();
+            try {
+                display = ctx.getDisplay();
+            } catch(Exception e) {
+                display = ((DisplayManager) ctx.getSystemService(Context.DISPLAY_SERVICE)).getDisplay(Display.DEFAULT_DISPLAY);
+            }
         } else {
             display = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         }
