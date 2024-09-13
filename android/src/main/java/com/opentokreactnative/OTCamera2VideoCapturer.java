@@ -33,7 +33,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-class Camera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer.CaptureSwitch {
+import com.opentok.android.BaseVideoCapturer;
+import com.opentok.android.Publisher;
+
+class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCapturer.CaptureSwitch {
     private static final int PREFERRED_FACING_CAMERA = CameraMetadata.LENS_FACING_FRONT;
     private static final int PIXEL_FORMAT = ImageFormat.YUV_420_888;
 
@@ -62,7 +65,6 @@ class Camera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCapture
     private final Size frameDimensions;
     private final int desiredFps;
     private Range<Integer> camFps;
-    final OtLog.LogToken log = new OtLog.LogToken(this);
     Runnable executeAfterClosed;
     Runnable executeAfterCameraOpened;
     Runnable executeAfterCameraSessionConfigured;
@@ -98,7 +100,7 @@ class Camera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCapture
         public void onOpened(@NonNull CameraDevice camera) {
             log.d("CameraDevice.StateCallback onOpened() enter");
             cameraState = CameraState.OPEN;
-            Camera2VideoCapturer.this.camera = camera;
+            OTCamera2VideoCapturer.this.camera = camera;
             if (executeAfterCameraOpened != null) {
                 executeAfterCameraOpened.run();
             }
@@ -111,7 +113,7 @@ class Camera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCapture
             log.d("CameraDevice.StateCallback onDisconnected() enter");
             try {
                 executeAfterClosed = null;
-                Camera2VideoCapturer.this.camera.close();
+                OTCamera2VideoCapturer.this.camera.close();
             } catch (Exception exception) {
                 handleException(exception);
             }
@@ -122,7 +124,7 @@ class Camera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCapture
         public void onError(@NonNull CameraDevice camera, int error) {
             log.d("CameraDevice.StateCallback onError() enter");
             try {
-                Camera2VideoCapturer.this.camera.close();
+                OTCamera2VideoCapturer.this.camera.close();
             } catch (Exception exception) {
                 handleException(exception);
             }
@@ -134,7 +136,7 @@ class Camera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCapture
             log.d("CameraDevice.StateCallback onClosed() enter.");
             super.onClosed(camera);
             cameraState = CameraState.CLOSED;
-            Camera2VideoCapturer.this.camera = null;
+            OTCamera2VideoCapturer.this.camera = null;
 
             if (executeAfterClosed != null) {
                 executeAfterClosed.run();
@@ -293,7 +295,7 @@ class Camera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCapture
     }
 
     /* Constructors etc... */
-    public Camera2VideoCapturer(Context ctx,
+    public OTCamera2VideoCapturer(Context ctx,
                                 Publisher.CameraCaptureResolution resolution,
                                 Publisher.CameraCaptureFrameRate fps) {
         cameraManager = (CameraManager) ctx.getSystemService(Context.CAMERA_SERVICE);
