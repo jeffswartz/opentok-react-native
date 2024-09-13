@@ -98,42 +98,42 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
     private final CameraDevice.StateCallback cameraObserver = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
-            log.d("CameraDevice.StateCallback onOpened() enter");
+            // log.d("CameraDevice.StateCallback onOpened() enter");
             cameraState = CameraState.OPEN;
             OTCamera2VideoCapturer.this.camera = camera;
             if (executeAfterCameraOpened != null) {
                 executeAfterCameraOpened.run();
             }
             executeAfterCameraOpened = null;
-            log.d("CameraDevice.StateCallback onOpened() exit");
+            // log.d("CameraDevice.StateCallback onOpened() exit");
         }
 
         @Override
         public void onDisconnected(@NonNull CameraDevice camera) {
-            log.d("CameraDevice.StateCallback onDisconnected() enter");
+            // log.d("CameraDevice.StateCallback onDisconnected() enter");
             try {
                 executeAfterClosed = null;
                 OTCamera2VideoCapturer.this.camera.close();
             } catch (Exception exception) {
                 handleException(exception);
             }
-            log.d("CameraDevice.StateCallback onDisconnected() exit");
+            // log.d("CameraDevice.StateCallback onDisconnected() exit");
         }
 
         @Override
         public void onError(@NonNull CameraDevice camera, int error) {
-            log.d("CameraDevice.StateCallback onError() enter");
+            // log.d("CameraDevice.StateCallback onError() enter");
             try {
                 OTCamera2VideoCapturer.this.camera.close();
             } catch (Exception exception) {
                 handleException(exception);
             }
-            log.d("CameraDevice.StateCallback onError() exit");
+            // log.d("CameraDevice.StateCallback onError() exit");
         }
 
         @Override
         public void onClosed(@NonNull CameraDevice camera) {
-            log.d("CameraDevice.StateCallback onClosed() enter.");
+            // log.d("CameraDevice.StateCallback onClosed() enter.");
             super.onClosed(camera);
             cameraState = CameraState.CLOSED;
             OTCamera2VideoCapturer.this.camera = null;
@@ -142,7 +142,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                 executeAfterClosed.run();
             }
             executeAfterClosed = null;
-            log.d("CameraDevice.StateCallback onClosed() exit.");
+            // log.d("CameraDevice.StateCallback onClosed() exit.");
         }
     };
 
@@ -155,7 +155,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                         || (frame.getPlanes().length > 0 && frame.getPlanes()[0].getBuffer() == null)
                         || (frame.getPlanes().length > 1 && frame.getPlanes()[1].getBuffer() == null)
                         || (frame.getPlanes().length > 2 && frame.getPlanes()[2].getBuffer() == null)) {
-                    log.d("onImageAvailable frame provided has no image data");
+                    // log.d("onImageAvailable frame provided has no image data");
                     return;
                 }
 
@@ -178,7 +178,6 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                 }
                 frame.close();
             } catch (IllegalStateException e) {
-                log.e("ImageReader.acquireNextImage() throws error !");
                 throw (new Camera2Exception(e.getMessage()));
             }
         }
@@ -188,7 +187,6 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
             new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
-                    log.d("CameraCaptureSession.StateCallback onConfigured() enter.");
 
                     try {
                         cameraState = CameraState.CAPTURE;
@@ -209,23 +207,20 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                             onCameraChanged(getCameraIndex());
                         }
                     }
-                    log.d("CameraCaptureSession.StateCallback onConfigured() exit.");
+                    // log.d("CameraCaptureSession.StateCallback onConfigured() exit.");
                 }
 
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                    log.d("CameraCaptureSession.StateCallback onFailed() enter.");
+                    // log.d("CameraCaptureSession.StateCallback onFailed() enter.");
                     cameraState = CameraState.ERROR;
-                    log.d("CameraCaptureSession.StateCallback onFailed() exit.");
                 }
 
                 @Override
                 public void onClosed(@NonNull CameraCaptureSession session) {
-                    log.d("CameraCaptureSession.StateCallback onClosed() enter.");
                     if (camera != null) {
                         camera.close();
                     }
-                    log.d("CameraCaptureSession.StateCallback onClosed() exit.");
                 }
             };
 
@@ -316,7 +311,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
             }
             setCameraIndex(findCameraIndex(camId));
             if (getCameraIndex() == -1) {
-                log.e("Exception!. Camera Index cannot be -1.");
+                // log.e("Exception!. Camera Index cannot be -1.");
             } else {
                 initCameraFrame();
             }
@@ -326,7 +321,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
     }
 
     private void doInit() {
-        log.d("doInit() enter");
+        // log.d("doInit() enter");
         cameraInfoCache = null;
         // start camera looper thread
         startCamThread();
@@ -334,7 +329,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
         startDisplayOrientationCache();
         // open selected camera
         initCamera();
-        log.d("doInit() exit");
+        // log.d("doInit() exit");
     }
 
     /**
@@ -342,16 +337,16 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
      */
     @Override
     public synchronized void init() {
-        log.d("init() enter");
+        // log.d("init() enter");
 
         doInit();
         cameraState = CameraState.SETUP;
 
-        log.d("init() exit");
+        // log.d("init() exit");
     }
 
     private void doStartCapture() {
-        log.d("doStartCapture() enter");
+        // log.d("doStartCapture() enter");
         cameraState = CameraState.CREATESESSION;
         try {
             // create camera preview request
@@ -388,7 +383,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
         } catch (CameraAccessException exception) {
             handleException(exception);
         }
-        log.d("doStartCapture() exit");
+        // log.d("doStartCapture() exit");
     }
 
     /**
@@ -396,7 +391,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
      */
     @Override
     public synchronized int startCapture() {
-        log.d("startCapture() enter (cameraState: " + cameraState + ")");
+        // log.d("startCapture() enter (cameraState: " + cameraState + ")");
         Runnable resume = () -> {
             initCamera();
             scheduleStartCapture();
@@ -409,7 +404,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
         } else {
             scheduleStartCapture();
         }
-        log.d("startCapture() exit");
+        // log.d("startCapture() exit");
         return 0;
     }
 
@@ -417,19 +412,19 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
      * Starts capturing video.
      */
     private synchronized void scheduleStartCapture() {
-        log.d("scheduleStartCapture() enter (cameraState: " + cameraState + ")");
+        // log.d("scheduleStartCapture() enter (cameraState: " + cameraState + ")");
         if (null != camera && CameraState.OPEN == cameraState) {
             doStartCapture();
             return;
         } else if (CameraState.SETUP == cameraState) {
-            log.d("camera not yet ready, queuing the start until camera is opened.");
+            // log.d("camera not yet ready, queuing the start until camera is opened.");
             executeAfterCameraOpened = this::doStartCapture;
         } else if (CameraState.CREATESESSION == cameraState) {
-            log.d("Camera session creation already requested");
+            // log.d("Camera session creation already requested");
         } else {
-            log.d("Start Capture called before init successfully completed.");
+            // log.d("Start Capture called before init successfully completed.");
         }
-        log.d("scheduleStartCapture() exit");
+        // log.d("scheduleStartCapture() exit");
     }
 
     /**
@@ -437,7 +432,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
      */
     @Override
     public synchronized int stopCapture() {
-        log.d("stopCapture() enter (cameraState: " + cameraState + ")");
+        // log.d("stopCapture() enter (cameraState: " + cameraState + ")");
         if (null != camera && null != captureSession && CameraState.CAPTURE == cameraState) {
             try {
                 captureSession.stopRepeating();
@@ -464,7 +459,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                 executeAfterCameraSessionConfigured = null;
             };
         }
-        log.d("stopCapture exit");
+        // log.d("stopCapture exit");
         return 0;
     }
 
@@ -473,7 +468,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
      */
     @Override
     public synchronized void destroy() {
-        log.d("destroy() enter");
+        // log.d("destroy() enter");
 
         /* stop display orientation polling */
         stopDisplayOrientationCache();
@@ -483,7 +478,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
 
         /* close ImageReader here */
         cameraFrame.close();
-        log.d("destroy() exit");
+        // log.d("destroy() exit");
     }
 
     /**
@@ -541,12 +536,12 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
         if (capabilities != null) {
             for (int capability : capabilities) {
                 if (capability == CameraMetadata.REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT) {
-                    log.d(" REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT => TRUE");
+                    // log.d(" REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT => TRUE");
                     return true;
                 }
             }
         }
-        log.d(" REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT => FALSE");
+        // log.d(" REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT => FALSE");
         return false;
     }
 
@@ -556,12 +551,12 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
         if (capabilities != null) {
             for (int capability : capabilities) {
                 if (capability == CameraMetadata.REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE) {
-                    log.d(" REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE => TRUE");
+                    // log.d(" REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE => TRUE");
                     return true;
                 }
             }
         }
-        log.d(" REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE => FALSE");
+        // log.d(" REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE => FALSE");
         return false;
     }
 
@@ -603,12 +598,12 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
     public synchronized void cycleCamera() {
         synchronized (lock) {
             if (cycleCameraInProgress) {
-                log.w("cycleCamera is still in progress.");
+                // log.w("cycleCamera is still in progress.");
                 return;
             }
             cycleCameraInProgress = true;
         }
-        log.d("cycleCamera() enter");
+        // log.d("cycleCamera() enter");
         try {
             int nextCameraIndex = getNextSupportedCameraIndex();
             setCameraIndex(nextCameraIndex);
@@ -624,7 +619,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
         } catch (Exception exception) {
             handleException(exception);
         }
-        log.d("cycleCamera() exit");
+        // log.d("cycleCamera() exit");
     }
 
     private boolean cycleCameraInProgress = false;
@@ -641,7 +636,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
 
     @Override
     public synchronized void swapCamera(int cameraId) {
-        log.d("swapCamera() enter. cameraState = " + cameraState);
+        // log.d("swapCamera() enter. cameraState = " + cameraState);
 
         CameraState oldState = cameraState;
         /* shutdown old camera but not the camera-callback thread */
@@ -673,7 +668,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                     break;
             }
         };
-        log.d("swapCamera() exit");
+        // log.d("swapCamera() exit");
     }
 
     boolean isFrontCamera() {
@@ -681,15 +676,15 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
     }
 
     private void startCamThread() {
-        log.d("startCamThread() enter");
+        // log.d("startCamThread() enter");
         cameraThread = new HandlerThread("Camera2VideoCapturer-Camera-Thread");
         cameraThread.start();
         cameraThreadHandler = new Handler(cameraThread.getLooper());
-        log.d("startCamThread() exit");
+        // log.d("startCamThread() exit");
     }
 
     private void stopCamThread() {
-        log.d("stopCamThread() enter");
+        // log.d("stopCamThread() enter");
         try {
             cameraThread.quitSafely();
             cameraThread.join();
@@ -699,7 +694,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
             cameraThread = null;
             cameraThreadHandler = null;
         }
-        log.d("stopCamThread() exit");
+        // log.d("stopCamThread() exit");
     }
 
     private String selectCamera(int lensDirection) throws CameraAccessException {
@@ -707,7 +702,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
             CameraCharacteristics info = cameraManager.getCameraCharacteristics(id);
             /* discard cameras that don't face the right direction */
             if (lensDirection == info.get(CameraCharacteristics.LENS_FACING)) {
-                log.d("selectCamera() Direction the camera faces relative to device screen: "
+                // log.d("selectCamera() Direction the camera faces relative to device screen: "
                         + info.get(CameraCharacteristics.LENS_FACING));
                 return id;
             }
@@ -723,7 +718,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                 Collections.addAll(fpsLst,
                         info.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES));
 
-                log.d("Supported fps ranges = " + fpsLst);
+                // log.d("Supported fps ranges = " + fpsLst);
                 Range<Integer> selectedRange = Collections.min(fpsLst, new Comparator<Range<Integer>>() {
                     @Override
                     public int compare(Range<Integer> lhs, Range<Integer> rhs) {
@@ -734,7 +729,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
                         return Math.abs(val.getLower() - fps) + Math.abs(val.getUpper() - fps);
                     }
                 });
-                log.d("Desired fps = " + fps + " || Selected frame rate range = " + selectedRange);
+                // log.d("Desired fps = " + fps + " || Selected frame rate range = " + selectedRange);
                 return selectedRange;
             }
         }
@@ -788,10 +783,10 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
 
     private void initCameraFrame() {
         if (getCameraIndex() == -1) {
-            log.e(" Camera Index cannot be -1. initCameraFrame() unsuccessful.");
+            // log.e(" Camera Index cannot be -1. initCameraFrame() unsuccessful.");
             return;
         }
-        log.d("initCameraFrame() enter.");
+        // log.d("initCameraFrame() enter.");
         try {
             String[] cameraIdList = cameraManager.getCameraIdList();
             String camId = cameraIdList[getCameraIndex()];
@@ -812,16 +807,16 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
             handleException(exception);
         }
 
-        log.d("initCameraFrame() exit.");
+        // log.d("initCameraFrame() exit.");
     }
 
     @SuppressLint("MissingPermission")
     private void initCamera() {
         if (getCameraIndex() == -1) {
-            log.e(" Camera Index cannot be -1. initCamera() unsuccessful.");
+            // log.e(" Camera Index cannot be -1. initCamera() unsuccessful.");
             return;
         }
-        log.d("initCamera() enter.");
+        // log.d("initCamera() enter.");
         try {
             cameraState = CameraState.SETUP;
             // find desired camera & camera output size
@@ -832,10 +827,10 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
             cameraInfoCache = new CameraInfoCache(cameraManager.getCameraCharacteristics(camId));
             cameraManager.openCamera(camId, cameraObserver, null);
         } catch (Exception exception) {
-            log.e("Camera cannot be opened. Check the error message below.");
+            // log.e("Camera cannot be opened. Check the error message below.");
             handleException(exception);
         }
-        log.d("initCamera() exit.");
+        // log.d("initCamera() exit.");
     }
 
     private void handleException(Exception exception) {
@@ -849,7 +844,7 @@ class OTCamera2VideoCapturer extends BaseVideoCapturer implements BaseVideoCaptu
         exception.printStackTrace(printWriter);
         printWriter.flush();
         String stackTrace = writer.toString();
-        log.e(stackTrace);
+        // log.e(stackTrace);
 
         //Send the exception to client
         onCaptureError(exception);
