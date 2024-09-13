@@ -185,8 +185,8 @@ public class OTSessionManager extends ReactContextBaseJavaModule
         } else {
             // View view = getCurrentActivity().getWindow().getDecorView().getRootView();
             // Context displayContext = this.getReactApplicationContext().getDisplayContext(view.getDisplay());
-            OTCamera2VideoCapturer capturer = new OTCamera2VideoCapturer(getCurrentActivity(), Publisher.CameraCaptureResolution.valueOf(resolution), Publisher.CameraCaptureFrameRate.valueOf(frameRate));
-            mPublisher = new Publisher.Builder(getCurrentActivity())
+            OTCamera2VideoCapturer capturer = new OTCamera2VideoCapturer(this.getReactApplicationContext(), Publisher.CameraCaptureResolution.valueOf(resolution), Publisher.CameraCaptureFrameRate.valueOf(frameRate));
+            mPublisher = new Publisher.Builder(this.getReactApplicationContext())
                     .audioTrack(audioTrack)
                     .videoTrack(videoTrack)
                     .name(name)
@@ -195,7 +195,7 @@ public class OTSessionManager extends ReactContextBaseJavaModule
                     .subscriberAudioFallbackEnabled​(subscriberAudioFallback)
                     .resolution(Publisher.CameraCaptureResolution.valueOf(resolution))
                     .frameRate(Publisher.CameraCaptureFrameRate.valueOf(frameRate))
-                    // .capturer(capturer)
+                    .capturer(capturer)
                     .build();
 
             if (cameraPosition.equals("back")) {
