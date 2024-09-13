@@ -184,7 +184,7 @@ public class OTSessionManager extends ReactContextBaseJavaModule
             mPublisher.setPublisherVideoType(PublisherKit.PublisherKitVideoType.PublisherKitVideoTypeScreen);
         } else {
             View view = getCurrentActivity().getWindow().getDecorView().getRootView();
-            OTCamera2VideoCapturer capturer = new OTCamera2VideoCapturer(view);
+            OTCamera2VideoCapturer capturer = new OTCamera2VideoCapturer(this.getReactApplicationContext(), Publisher.CameraCaptureResolution.valueOf(resolution), Publisher.CameraCaptureFrameRate.valueOf(frameRate));
             mPublisher = new Publisher.Builder(this.getReactApplicationContext())
                     .audioTrack(audioTrack)
                     .videoTrack(videoTrack)
