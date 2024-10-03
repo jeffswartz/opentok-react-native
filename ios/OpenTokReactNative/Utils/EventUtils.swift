@@ -7,6 +7,7 @@
 //
 
 import Foundation
+#import <OpenTok/OpenTok.h>
 
 class EventUtils {
     
@@ -41,9 +42,53 @@ class EventUtils {
     }
     
     static func prepareJSErrorEventData(_ error: OTError) -> Dictionary<String, Any> {
+        let errorNameDictionary: errorInfo: Dictionary<Int, String> = [
+                OTPublisherSuccess: "PublisherSuccess",
+                OTSessionDisconnected: "SessionDisconnected",
+                OTPublisherInternalError: "PublisherInternalError",
+                OTPublisherWebRTCError: "PublisherWebRTCError",
+                OTPublisherEncryptionInternalError: "PublisherEncryptionInternalError",
+                OTSessionSuccess: "SessionSuccess",
+                OTAuthorizationFailure: "AuthorizationFailure",
+                OTErrorInvalidSession: "ErrorInvalidSession",
+                OTConnectionFailed: "ConnectionFailed",
+                OTNullOrInvalidParameter: "NullOrInvalidParameter",
+                OTNotConnected: "NotConnected",
+                OTSessionIllegalState: "SessionIllegalState",
+                OTNoMessagingServer: "NoMessagingServer",
+                OTConnectionRefused: "ConnectionRefused",
+                OTSessionStateFailed: "SessionStateFailed",
+                OTP2PSessionMaxParticipants: "P2PSessionMaxParticipants",
+                OTSessionConnectionTimeout: "SessionConnectionTimeout",
+                OTSessionInternalError: "SessionInternalError",
+                OTSessionInvalidSignalType: "SessionInvalidSignalType",
+                OTSessionSignalDataTooLong: "SessionSignalDataTooLong",
+                OTSessionUnableToForceMute: "SessionUnableToForceMute",
+                OTConnectionDropped: "ConnectionDropped",
+                OTSessionSubscriberNotFound: "SessionSubscriberNotFound",
+                OTSessionPublisherNotFound: "SessionPublisherNotFound",
+                OTSessionBlockedCountry: "SessionBlockedCountry",
+                OTSessionConnectionLimitExceeded: "SessionConnectionLimitExceeded",
+                OTSessionEncryptionSecretMissing: "SessionEncryptionSecretMissing",
+                OTSessionInvalidEncryptionSecret: "SessionInvalidEncryptionSecret",
+                OTSubscriberSuccess: "SubscriberSuccess",
+                OTConnectionTimedOut: "ConnectionTimedOut",
+                OTSubscriberSessionDisconnected: "SubscriberSessionDisconnected",
+                OTSubscriberWebRTCError: "SubscriberWebRTCError",
+                OTSubscriberServerCannotFindStream: "SubscriberServerCannotFindStream",
+                OTSubscriberStreamLimitExceeded: "SubscriberStreamLimitExceeded",
+                OTSubscriberInternalError: "SubscriberInternalError",
+                OTSubsriberPeerConnectionNotConnected: "SubsriberPeerConnectionNotConnected",
+                OTSubscriberDecryptionInternalError: "SubscriberDecryptionInternalError",
+                EncryptionSecretMismatch: "EncryptionSecretMismatch"];
         var errorInfo: Dictionary<String, Any> = [:];
         errorInfo["code"] = error.code;
         errorInfo["message"] = error.localizedDescription;
+        if (errorNameDictionary[error.code]) {
+           errorInfo["name"] = errorNameDictionary[error.code];
+        } else {
+          errorInfo["name"] = "Error";
+        }
         return errorInfo;
     }
     

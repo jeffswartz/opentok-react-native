@@ -1,3 +1,7 @@
+# 2.28.3 (October 2024)
+
+- [Update]: This version adds a `name` property to the Error object. Use this `name` property, not the `code` property, to identify errorsThe value of the existing `code` property of the Error object is set to different values in iOS and Android. The value of the `name` property will be the same on both iOS and Android (when the two SDKs expose the same errors). This is a beta feature.
+
 # 2.28.2  (September 2024)
 
 - [Update]: This version updates the Vonage Video Android and iOS SDK to version 2.28.1. See the [Android SDK release notes](https://tokbox.com/developer/sdks/android/release-notes.html) and the [iOS SDK release notes](https://tokbox.com/developer/sdks/ios/release-notes.html).

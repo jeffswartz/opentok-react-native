@@ -1,5 +1,6 @@
 package com.opentokreactnative.utils;
 
+import java.util.Map;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -51,7 +52,9 @@ public final class EventUtils {
 
         WritableMap errorInfo = Arguments.createMap();
         errorInfo.putString("message", error.getMessage());
-        errorInfo.putString("code", error.getErrorCode().toString());
+        String errorCode = error.getErrorCode().toString();
+        errorInfo.putString("code", errorCode);
+        errorInfo.putString("name", errorCode);
         return errorInfo;
     }
 

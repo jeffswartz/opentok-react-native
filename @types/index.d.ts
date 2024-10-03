@@ -71,6 +71,7 @@ declare module "opentok-react-native" {
   interface ErrorEvent {
     code: string;
     message: string;
+    name: string;
   }
 
   interface SubscriberCaptionEvent {
