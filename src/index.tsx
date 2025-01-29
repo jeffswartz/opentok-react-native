@@ -1,22 +1,4 @@
 import OpentokReactNative from './NativeOpentokReactNative';
+import OTSubscriberView from './OTSubscriberViewNativeComponent';
 
-/*
-export function connectToSession(
-  apiKey: string,
-  sessionId: string,
-  token: string
-): void {
-  console.log('hello');
-  OpentokReactNative.initSession(apiKey, sessionId, {});
-  OpentokReactNative.connect(sessionId, token);
-  setTimeout(() => {
-    OpentokReactNative.sendSignal(
-      sessionId,
-      'test-type',
-      'Hello from React Native.'
-    );
-  }, 12000);
-}
-*/
-
-export { OpentokReactNative as OTSessionManager };
+export { OTSubscriberView, OpentokReactNative as OTSessionManager };
