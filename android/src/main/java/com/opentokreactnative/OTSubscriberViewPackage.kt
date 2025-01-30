@@ -9,20 +9,20 @@ import com.facebook.react.uimanager.ViewManager
 
 class OTSubscriberViewPackage : TurboReactPackage() {
   override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-    return listOf(OTSubscriberViewManager(reactContext))
+    return listOf(OTSubscriberViewNativeManager(reactContext))
   }
 
   override fun getModule(s: String, reactApplicationContext: ReactApplicationContext): NativeModule? {
     when (s) {
-      OTSubscriberViewManager.REACT_CLASS -> OTSubscriberViewManager(reactApplicationContext)
+      OTSubscriberViewNativeManager.REACT_CLASS -> OTSubscriberViewNativeManager(reactApplicationContext)
     }
     return null
   }
 
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider = ReactModuleInfoProvider {
-    mapOf(OTSubscriberViewManager.REACT_CLASS to ReactModuleInfo(
-      OTSubscriberViewManager.REACT_CLASS, // _name = 
-      OTSubscriberViewManager.REACT_CLASS, // _className = 
+    mapOf(OTSubscriberViewNativeManager.REACT_CLASS to ReactModuleInfo(
+      OTSubscriberViewNativeManager.REACT_CLASS, // _name = 
+      OTSubscriberViewNativeManager.REACT_CLASS, // _className = 
       false, // _canOverrideExistingModule = 
       false, // _needsEagerInit = 
       true,  // hasConstants

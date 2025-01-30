@@ -6,13 +6,13 @@ import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewManagerDelegate;
 import com.facebook.react.uimanager.annotations.ReactProp;
-import com.facebook.react.viewmanagers.OTSubscriberViewManagerInterface;
-import com.facebook.react.viewmanagers.OTSubscriberViewManagerDelegate;
+import com.facebook.react.viewmanagers.OTSubscriberViewNativeManagerInterface;
+import com.facebook.react.viewmanagers.OTSubscriberViewNativeManagerDelegate;
 
-@ReactModule(name = OTSubscriberViewManager.REACT_CLASS)
-class OTSubscriberViewManager(context: ReactApplicationContext) : SimpleViewManager<OTSubscriberView>(), OTSubscriberViewManagerInterface<OTSubscriberView> {
-  private val delegate: OTSubscriberViewManagerDelegate<OTSubscriberView, OTSubscriberViewManager> =
-    OTSubscriberViewManagerDelegate(this)
+@ReactModule(name = OTSubscriberViewNativeManager.REACT_CLASS)
+class OTSubscriberViewNativeManager(context: ReactApplicationContext) : SimpleViewManager<OTSubscriberView>(), OTSubscriberViewNativeManagerInterface<OTSubscriberView> {
+  private val delegate: OTSubscriberViewNativeManagerDelegate<OTSubscriberView, OTSubscriberViewNativeManager> =
+    OTSubscriberViewNativeManagerDelegate(this)
 
   override fun getDelegate(): ViewManagerDelegate<OTSubscriberView> = delegate
 
