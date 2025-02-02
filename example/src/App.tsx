@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
 
-import { OTSessionManager } from '../../src';
+import { OTSessionManager } from 'opentok-react-native';
 
 function App(): React.JSX.Element {
   const apiKey = '472032';
