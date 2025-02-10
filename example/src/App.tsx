@@ -1,11 +1,11 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   Text,
 } from 'react-native';
 
-import { OTSession } from 'opentok-react-native';
+import { OTSession, OTSubscriberView } from 'opentok-react-native';
 
 function App(): React.JSX.Element {
   const apiKey = '472032';
@@ -18,8 +18,9 @@ function App(): React.JSX.Element {
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
 
   const sessionRef = useRef<OTSession>(null);
+  const subscriberRef = useRef<OTSubscriberView>(null);
   const toggleVideo = () => {
-    setSubscribeToVideo(val => !val);
+    setSubscribeToVideo((val) => !val);
   };
 
   React.useEffect(() => {
@@ -60,11 +61,27 @@ function App(): React.JSX.Element {
         }}
         style={styles.session}
       >
-        {streamIds?.map((streamId) => <Text
-          style={styles.text}
-          key={streamId}>
-          Stream: {streamId}
-        </Text>)}
+        {streamIds?.map((streamId) => <OTSubscriberView
+            streamId={streamId}
+            sessionId={sessionId}
+            key={streamId}
+            ref={subscriberRef}
+            subscribeToVideo={subscribeToVideo}
+            subscribeToAudio={!subscribeToVideo}
+            style={styles.webview}
+            eventHandlers={{
+              subscriberConnected: (event: any) => {
+                console.log('subscriberConnected', event);
+                setTimeout(() => {
+                  subscriberRef.current?.getRtcStatsReport();
+                }, 4000);
+              },
+              onRtcStatsReport: (event: any) => {
+                console.log('onRtcStatsReport', event);
+              },
+            }}
+          />
+        )}
         </OTSession>
       <Text style={styles.text}>
         Stream count: {streamIds.length.toString()}
