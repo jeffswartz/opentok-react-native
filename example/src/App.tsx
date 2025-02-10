@@ -5,14 +5,12 @@ import {
   Text,
 } from 'react-native';
 
-import OTSession from 'opentok-react-native';
+import { OTSession } from 'opentok-react-native';
 
 function App(): React.JSX.Element {
-  const apiKey = '472032';
-  const sessionId =
-    '1_MX40NzIwMzJ-fjE3MzM0NTAzOTcyNjh-L0FQMkR0K2tVc214ajJOVzZiYWtYclg1fn5-';
-  const token =
-    'T1==cGFydG5lcl9pZD00NzIwMzImc2lnPTNhOTg4ZDJmYWRlYTcyZjQ4MWFhOTg0Yjk3NjRjM2RhYjIwNGIzOGM6c2Vzc2lvbl9pZD0xX01YNDBOekl3TXpKLWZqRTNNek0wTlRBek9UY3lOamgtTDBGUU1rUjBLMnRWYzIxNGFqSk9WelppWVd0WWNsZzFmbjUtJmNyZWF0ZV90aW1lPTE3MzgyNzkyNjEmbm9uY2U9MC43MTE4NTA0MTk1MzI5MDM2JnJvbGU9bW9kZXJhdG9yJmV4cGlyZV90aW1lPTE3NDA4NzEyNjA3NTAmaW5pdGlhbF9sYXlvdXRfY2xhc3NfbGlzdD0=';
+  const apiKey = '';
+  const sessionId = '';
+  const token = '';
 
   const [streamIds, setStreamIds] = React.useState<string[]>([]);
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
