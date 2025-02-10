@@ -1,4 +1,3 @@
-import OpentokReactNative from './NativeOpentokReactNative';
-import OTSubscriberView from './OTSubscriberViewNativeComponent';
+import OTSession from './OTSession';
 
-export { OTSubscriberView, OpentokReactNative as OTSessionManager };
+export { OTSession };
