@@ -27,5 +27,5 @@ export interface NativeProps extends ViewProps {
 }
 
 export default codegenNativeComponent<NativeProps>(
-  'OTSubscriberView',
+  'OTSubscriberViewNative',
 ) as HostComponent<NativeProps>;

@@ -18,7 +18,7 @@ function App(): React.JSX.Element {
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
 
   const sessionRef = useRef<OTSession>(null);
-  const subscriberRef = useRef<OTSubscriberView>(null);
+  const subscriberRef = useRef<OTSubscriberViewNative>(null);
   const toggleVideo = () => {
     setSubscribeToVideo((val) => !val);
   };

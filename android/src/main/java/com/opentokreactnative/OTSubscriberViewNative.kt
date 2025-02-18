@@ -18,7 +18,7 @@ import com.opentok.android.SubscriberKit
 import com.opentok.android.SubscriberKit.SubscriberListener
 import com.opentok.android.SubscriberKit.SubscriberRtcStatsReportListener
 
-class OTSubscriberView: FrameLayout, SubscriberListener, SubscriberRtcStatsReportListener {
+class OTSubscriberViewNative: FrameLayout, SubscriberListener, SubscriberRtcStatsReportListener {
   private var session: Session? = null
   private var stream: Stream? = null
   private var sessionId: String?= ""
