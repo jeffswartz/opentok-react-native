@@ -74,6 +74,15 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
   }
 
   @Override
+  public void getPublisherRtcStatsReport(String publisherId) {
+    ConcurrentHashMap<String, Publisher> publishers = sharedState.getPublishers();
+    Publisher publisher = publishers.get(publisherId);
+    if (publisher != null) {
+      publisher.getRtcStatsReport();
+    }
+  }
+
+  @Override
   public void onConnected(Session session) {
     WritableMap payload = Arguments.createMap();
     payload.putString("sessionId", session.getSessionId());
