@@ -20,25 +20,20 @@ class OTPublisherViewNativeManager(context: ReactApplicationContext) : SimpleVie
 
   override fun createViewInstance(context: ThemedReactContext): OTPublisherViewNative = OTPublisherViewNative(context)
 
-  @ReactProp(name = "streamId")
-  override public fun setStreamId(view: OTPublisherViewNative, streamId: String?) {
-    view.setStreamId(streamId)
-  }
-
   @ReactProp(name = "sessionId")
   override public fun setSessionId(view: OTPublisherViewNative, sessionId: String?) {
     view.setSessionId(sessionId)
   }
 
 
-  @ReactProp(name = "subscribeToAudio")
-  override public fun setSubscribeToAudio(view: OTPublisherViewNative, value: Boolean) {
-    view.setSubscribeToAudio(value)
+  @ReactProp(name = "publishAudio")
+  override public fun setPublishAudio(view: OTPublisherViewNative, value: Boolean) {
+    view.setPublishAudio(value)
   }
 
-  @ReactProp(name = "subscribeToVideo")
-  override public fun setSubscribeToVideo(view: OTPublisherViewNative, value: Boolean) {
-    view.setSubscribeToVideo(value)
+  @ReactProp(name = "publishVideo")
+  override public fun setPublishVideo(view: OTPublisherViewNative, value: Boolean) {
+    view.setPublishVideo(value)
   }
 
   companion object {

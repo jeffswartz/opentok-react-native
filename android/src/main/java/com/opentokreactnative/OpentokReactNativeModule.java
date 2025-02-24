@@ -73,6 +73,7 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
       }
   }
 
+  /*
   @Override
   public void getPublisherRtcStatsReport(String publisherId) {
     ConcurrentHashMap<String, Publisher> publishers = sharedState.getPublishers();
@@ -81,6 +82,7 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
       publisher.getRtcStatsReport();
     }
   }
+  */
 
   @Override
   public void onConnected(Session session) {

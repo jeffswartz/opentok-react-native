@@ -32,14 +32,7 @@ export default class OTPublisherView extends React.Component {
       this.props.eventHandlers?.streamDestroyed;
     this.eventHandlers.error =
       this.props.eventHandlers?.error;
-    this.eventHandlers.rtcStatsReport =
-      this.props.eventHandlers?.rtcStatsReport;
   };
-
-  getRtcStatsReport() {
-    //NOSONAR - this method is exposed externally
-    OT.getPublisherRtcStatsReport(this.state.publisherId);
-  }
 
   render() {
     const { style, sessionId, streamId, publishAudio, publishVideo } =
@@ -47,20 +40,13 @@ export default class OTPublisherView extends React.Component {
     return (
       <OTPublisherViewNative
         sessionId={sessionId}
-        streamId={streamId}
         publishAudio={publishAudio}
         publishVideo={publishVideo}
-        onStreamCreated={(event) => {
-          this.eventHandlers.streamCreated(event.nativeEvent);
-        }}
-        onStreamDestroyed={(event) => {
-          this.eventHandlers.streamDestroyed(event.nativeEvent);
-        }}
         onError={(event) => {
-          this.eventHandlers.error(event.nativeEvent);
+          this.eventHandlers.error && this.eventHandlers.error(event.nativeEvent);
         }}
-        onRtcStatsReport={(event) => {
-          this.eventHandlers.rtcStatsReport(event.nativeEvent);
+        onStreamCreated={(event) => {
+          this.eventHandlers.streamCreated && this.eventHandlers.streamCreated(event.nativeEvent);
         }}
         style={style}
       />

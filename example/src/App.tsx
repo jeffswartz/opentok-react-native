@@ -1,17 +1,22 @@
 import React, { useRef } from 'react';
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
 
-import { OTSession, OTSubscriberView } from 'opentok-react-native';
+import {
+  OTSession,
+  OTSubscriberView,
+  OTPublisherView,
+} from 'opentok-react-native';
 
 function App(): React.JSX.Element {
-  this.apiKey = '472032';
-  this.sessionId =
+  const apiKey = '472032';
+  const sessionId =
     '1_MX40NzIwMzJ-fjE3MzM0NTAzOTcyNjh-L0FQMkR0K2tVc214ajJOVzZiYWtYclg1fn5-';
-  this.token =
+  const token =
     'T1==cGFydG5lcl9pZD00NzIwMzImc2lnPTNhOTg4ZDJmYWRlYTcyZjQ4MWFhOTg0Yjk3NjRjM2RhYjIwNGIzOGM6c2Vzc2lvbl9pZD0xX01YNDBOekl3TXpKLWZqRTNNek0wTlRBek9UY3lOamgtTDBGUU1rUjBLMnRWYzIxNGFqSk9WelppWVd0WWNsZzFmbjUtJmNyZWF0ZV90aW1lPTE3MzgyNzkyNjEmbm9uY2U9MC43MTE4NTA0MTk1MzI5MDM2JnJvbGU9bW9kZXJhdG9yJmV4cGlyZV90aW1lPTE3NDA4NzEyNjA3NTAmaW5pdGlhbF9sYXlvdXRfY2xhc3NfbGlzdD0=';
 
   const [streamIds, setStreamIds] = React.useState<string[]>([]);
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
+  const [connected, setConnected] = React.useState<boolean>(false);
 
   const sessionRef = useRef<OTSession>(null);
   const subscriberRef = useRef<OTSubscriberViewNative>(null);
@@ -38,6 +43,7 @@ function App(): React.JSX.Element {
         eventHandlers={{
           sessionConnected: (event: any) => {
             console.log('sessionConnected', event);
+            setConnected(true);
             sessionRef.current?.signal({
               type: 'greeting2',
               data: 'hello again from React Native',
@@ -58,6 +64,16 @@ function App(): React.JSX.Element {
         }}
         style={styles.session}
       >
+        {connected && (
+          <OTPublisherView
+            sessionId={sessionId}
+            eventHandlers={{
+              error: (event) => console.log('pub error', event),
+              streamCreated: (event) => console.log('pub streamCreated', event),
+            }}
+          />
+        )}
+
         {streamIds?.map((streamId) => (
           <OTSubscriberView
             streamId={streamId}

@@ -9,15 +9,16 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
+import com.opentok.android.BaseVideoRenderer
 import com.opentok.android.OpentokError
 import com.opentok.android.Session
 import com.opentok.android.Stream
 import com.opentok.android.Publisher
 import com.opentok.android.PublisherKit
 import com.opentok.android.PublisherKit.PublisherListener
-import com.opentok.android.PublisherKit.PublisherRtcStatsReportListener
+// import com.opentok.android.PublisherKit.PublisherRtcStatsReportListener
 
-class OTPublisherViewNative: FrameLayout, PublisherListener, PublisherRtcStatsReportListener {
+class OTPublisherViewNative: FrameLayout, PublisherListener {
   private var session: Session? = null
   private var sessionId: String?= ""
   private var publishAudio = true
@@ -40,7 +41,7 @@ class OTPublisherViewNative: FrameLayout, PublisherListener, PublisherRtcStatsRe
   override fun onAttachedToWindow() {
     session = sharedState.getSessions().get(sessionId)
     super.onAttachedToWindow()
-    publishStram(session ?: return)
+    publishStream(session ?: return)
   }
 
   private fun configureComponent(context: Context) {
@@ -64,7 +65,7 @@ class OTPublisherViewNative: FrameLayout, PublisherListener, PublisherRtcStatsRe
 
   public fun setPublishAudio(value: Boolean) {
     publishAudio = value
-    publisher?.publishAudio(value)
+    publisher?.setPublishAudio(value)
   }
 
   public fun setPublishVideo(value: Boolean) {
@@ -72,18 +73,17 @@ class OTPublisherViewNative: FrameLayout, PublisherListener, PublisherRtcStatsRe
     publisher?.setPublishVideo(value)
   }
 
-  fun publishStream(session: Session, stream: Stream) {
+  fun publishStream(session: Session) {
     publisher = Publisher.Builder(context).build()
     // sharedState.getPublishers().put(stream.getStreamId(), publisher?: return);
     publisher?.setStyle(
         BaseVideoRenderer.STYLE_VIDEO_SCALE,
         BaseVideoRenderer.STYLE_VIDEO_FILL
     )
-    publsiher?.setPublishererListener(this)
-    publsiher?.setRtcStatsReportListener(this)
-    publsiher?.setPublishAudio(publishAudio)
-    publsiher?.setPublishVideo(publishVideo)
-    // FrameLayout mubscriberViewContainer = FrameLayout(context);
+    publisher?.setPublisherListener(this)
+    // publisher?.setRtcStatsReportListener(this)
+    publisher?.setPublishAudio(true)
+    publisher?.setPublishVideo(true)
 
     session.publish(publisher)
     if (publisher?.view != null) {
@@ -123,15 +123,16 @@ class OTPublisherViewNative: FrameLayout, PublisherListener, PublisherRtcStatsRe
   override fun onError(publisher: PublisherKit, opentokError: OpentokError) {
     val payload =
       Arguments.createMap().apply {
-        putString("code", opentokError.code)
+        putString("code", opentokError.errorCode.toString())
         putString("message", opentokError.message)
       }
     emitOpenTokEvent("onError", payload)
   }
 
-  override fun onRtcStatsReport(publisher: PublisherKit, stats: PublisherKit.PublisherRtcStats) {
+  /*
+  override fun onRtcStatsReport(publisher: PublisherKit, jsonArrayOfReports: String) {
       val statsArrayMap = Arguments.createArray().apply {
-        for (PublisherKit.PublisherRtcStats stat : stats) {
+        for (stat: PublisherKit.PublisherRtcStats in stats) {
           val statMap = Arguments.createMap().apply {
             putString("connectionId", stat.connectionId);
             putString("jsonArrayOfReports", stat.jsonArrayOfReports);
@@ -142,6 +143,7 @@ class OTPublisherViewNative: FrameLayout, PublisherListener, PublisherRtcStatsRe
 
       emitOpenTokEvent("onRtcStatsReport", statsArrayMap)
   }
+  */
 
   inner class OpenTokEvent(
       surfaceId: Int,
