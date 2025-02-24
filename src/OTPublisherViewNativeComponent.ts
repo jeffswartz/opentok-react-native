@@ -1,11 +1,14 @@
-import type { HostComponent, ViewProps } from 'react-native';
-import type { BubblingEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
+import type {HostComponent, ViewProps} from 'react-native';
+import type {BubblingEventHandler} from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 
-type VideoSource = 'screen' | 'camera';
+type Connection = {
+  creationTime: string;
+  data: string;
+  connectionId: string;
+}
 
-interface Stream {
-  name: string;
+type StreamEvent = {
   streamId: string;
   hasAudio: boolean;
   hasCaptions: boolean;
@@ -14,41 +17,34 @@ interface Stream {
   connectionId: string;
   width: number;
   height: number;
-  videoType: VideoSource;
+  videoType: string;
   connection: Connection;
   creationTime: string;
-}
+};
 
-interface Connection {
-  creationTime: string;
-  data: string;
+type PublisherRtcStatsReport = {
   connectionId: string;
+  jsonArrayOfReports: string;
 }
 
-interface StreamCreatedEvent extends Stream {}
+type PublisherRTCStatsReportEvent = PublisherRtcStatsReport[];
 
-interface StreamDestroyedEvent extends Stream {}
-
-interface ErrorEvent {
+type ErrorEvent = {
   code: string;
   message: string;
 }
 
-type PublisherRtcStatsReportEvent = Array<{
-  connectionId: string;
-  jsonArrayOfReports: string;
-}>;
-
 export interface NativeProps extends ViewProps {
-  sessionId: string;
-  publishAudio?: boolean;
-  publishVideo?: boolean;
-  onStreamCreated?: BubblingEventHandler<StreamCreatedEvent> | null;
-  onStreamDestroyed?: BubblingEventHandler<StreamDestroyedEvent> | null;
-  onError?: BubblingEventHandler<ErrorEvent> | null;
-  onRtcStatsReport?: BubblingEventHandler<PublisherRtcStatsReportEvent> | null;
+    sessionId: string;
+    streamId: string;
+    publishAudio?: boolean;
+    publishVideo?: boolean;
+    onStreamCreated?: BubblingEventHandler<StreamEvent> | null;
+    onStreamDestroyed?: BubblingEventHandler<StreamEvent> | null;
+    onError?: BubblingEventHandler<ErrorEvent> | null;
+    onRtcStatsReport?: BubblingEventHandler<PublisherRTCStatsReportEvent> | null;
 }
 
 export default codegenNativeComponent<NativeProps>(
-  'OTPublisherViewNative'
+  'OTPublisherViewNative',
 ) as HostComponent<NativeProps>;

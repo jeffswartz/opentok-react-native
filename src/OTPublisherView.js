@@ -3,9 +3,9 @@ import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import PropTypes from 'prop-types';
 import uuid from 'react-native-uuid';
 import { OT } from './OT';
-import OTPublisherNative from './OTPublisherNativeComponent';
+import OTPublisherViewNative from './OTPublisherViewNativeComponent';
 
-export default class OTPublisher extends React.Component {
+export default class OTPublisherView extends React.Component {
   static defaultProps = {
     publishVideo: true,
     publishAudio: true,
@@ -42,10 +42,10 @@ export default class OTPublisher extends React.Component {
   }
 
   render() {
-    const { style, sessionId, streamId, subscribeToAudio, subscribeToVideo } =
+    const { style, sessionId, streamId, publishAudio, publishVideo } =
       this.props;
     return (
-      <OTPublisherNative
+      <OTPublisherViewNative
         sessionId={sessionId}
         streamId={streamId}
         publishAudio={publishAudio}
@@ -68,16 +68,15 @@ export default class OTPublisher extends React.Component {
   }
 }
 
-OTPublisher.propTypes = {
+OTPublisherView.propTypes = {
   sessionId: PropTypes.string.isRequired,
-  streamId: PropTypes.string.isRequired,
   eventHandlers: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   publishAudio: PropTypes.bool,
   publishVideo: PropTypes.bool,
   style: ViewPropTypes.style,
 };
 
-OTPublisher.defaultProps = {
+OTPublisherView.defaultProps = {
   eventHandlers: {},
   publishAudio: true,
   publishVideo: true,
