@@ -1,19 +1,15 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import PropTypes from 'prop-types';
 import uuid from 'react-native-uuid';
-import { OT } from './OT';
+import {
+  checkAndroidPermissions,
+  OT,
+} from './OT';
 import OTPublisherViewNative from './OTPublisherViewNativeComponent';
 
 export default class OTPublisherView extends React.Component {
-  static defaultProps = {
-    publishVideo: true,
-    publishAudio: true,
-    style: {
-      flex: 1,
-    },
-  };
-
   eventHandlers = {};
 
   constructor(props) {
@@ -32,7 +28,23 @@ export default class OTPublisherView extends React.Component {
       this.props.eventHandlers?.streamDestroyed;
     this.eventHandlers.error =
       this.props.eventHandlers?.error;
-  };
+    if (Platform.OS === 'android') {
+      // const publisherProperties = sanitizeProperties(this.props.properties);
+      const publisherProperties = { audioTrack: true, videoTrack: true, videoSource: 'camera' };
+      const { audioTrack, videoTrack, videoSource } = publisherProperties;
+      const isScreenSharing = (videoSource === 'screen');
+      checkAndroidPermissions(audioTrack, videoTrack, isScreenSharing)
+        .then(() => {
+          // TODO: initPublisher upon session connection
+          // this.initPublisher(publisherProperties);
+        })
+        .catch((error) => {
+          // this.otrnEventHandler(error);
+        });
+    } else {
+      this.initPublisher(publisherProperties);
+    }
+    };
 
   render() {
     const { style, sessionId, streamId, publishAudio, publishVideo } =
@@ -64,8 +76,10 @@ OTPublisherView.propTypes = {
 
 OTPublisherView.defaultProps = {
   eventHandlers: {},
-  publishAudio: true,
-  publishVideo: true,
+  properties: {
+    publishAudio: true,
+    publishVideo: true,  
+  }
   style: {
     flex: 1,
   },
