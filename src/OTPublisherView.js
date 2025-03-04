@@ -8,6 +8,7 @@ import {
   OT,
 } from './OT';
 import OTPublisherViewNative from './OTPublisherViewNativeComponent';
+import { addEventListener } from './helpers/OTSessionHelper';
 
 export default class OTPublisherView extends React.Component {
   eventHandlers = {};
@@ -21,7 +22,12 @@ export default class OTPublisherView extends React.Component {
     };
   }
 
+  onSessionConnected = () => {
+    OT.publish(this.state.publisherId);
+  }
+
   initComponent = () => {
+    addEventListener('sessionConnected', )
     this.eventHandlers.streamCreated =
       this.props.eventHandlers?.streamCreated;
     this.eventHandlers.streamDestroyed =
@@ -52,6 +58,7 @@ export default class OTPublisherView extends React.Component {
     return (
       <OTPublisherViewNative
         sessionId={sessionId}
+        publisherId={this.state.publisherId}
         publishAudio={publishAudio}
         publishVideo={publishVideo}
         onError={(event) => {
@@ -79,7 +86,7 @@ OTPublisherView.defaultProps = {
   properties: {
     publishAudio: true,
     publishVideo: true,  
-  }
+  },
   style: {
     flex: 1,
   },

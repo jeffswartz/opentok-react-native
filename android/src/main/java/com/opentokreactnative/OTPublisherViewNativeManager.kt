@@ -25,6 +25,10 @@ class OTPublisherViewNativeManager(context: ReactApplicationContext) : SimpleVie
     view.setSessionId(sessionId)
   }
 
+  @ReactProp(name = "publisherId")
+  override public fun setPublisherId(view: OTPublisherViewNative, publisherId: String?) {
+    view.setPublisherId(publisherId)
+  }
 
   @ReactProp(name = "publishAudio")
   override public fun setPublishAudio(view: OTPublisherViewNative, value: Boolean) {

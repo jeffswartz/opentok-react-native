@@ -11,6 +11,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.WritableMap;
 import com.opentok.android.Connection;
 import com.opentok.android.OpentokError;
+import com.opentok.android.Publisher;
 import com.opentok.android.Session;
 import com.opentok.android.Session.SessionListener;
 import com.opentok.android.Session.SignalListener;
@@ -71,6 +72,15 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
     for (Subscriber subscriber : subscriberList) {
           subscriber.getRtcStatsReport();
       }
+  }
+
+  @Override
+  public void publish(String publisherId) {
+    ConcurrentHashMap<String, Publisher> publishers = sharedState.getPublishers();
+    Publisher publisher = publishers.get(publisherId);
+    if (publisher != null) {
+      session.publish(publisher);
+    }
   }
 
   /*

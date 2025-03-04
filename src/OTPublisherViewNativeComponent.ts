@@ -13,6 +13,7 @@ type ErrorEvent = {
 
 export interface NativeProps extends ViewProps {
   sessionId: string;
+  publisherId: string;
   publishAudio?: boolean;
   publishVideo?: boolean;
   onError?: BubblingEventHandler<ErrorEvent> | null;

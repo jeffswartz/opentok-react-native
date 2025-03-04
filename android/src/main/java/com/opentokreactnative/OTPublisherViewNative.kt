@@ -21,6 +21,7 @@ import com.opentok.android.PublisherKit.PublisherListener
 class OTPublisherViewNative: FrameLayout, PublisherListener {
   private var session: Session? = null
   private var sessionId: String?= ""
+  private var publisherId: String?= ""
   private var publishAudio = true
   private var publishVideo = true
   private var publisher: Publisher? = null
@@ -63,6 +64,10 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
     sessionId = str
   }
 
+  public fun setPublisherId(str: String?) {
+    publisherId = str
+  }
+
   public fun setPublishAudio(value: Boolean) {
     publishAudio = value
     publisher?.setPublishAudio(value)
@@ -75,7 +80,6 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
 
   fun publishStream(session: Session) {
     publisher = Publisher.Builder(context).build()
-    // sharedState.getPublishers().put(stream.getStreamId(), publisher?: return);
     publisher?.setStyle(
         BaseVideoRenderer.STYLE_VIDEO_SCALE,
         BaseVideoRenderer.STYLE_VIDEO_FILL
@@ -85,7 +89,7 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
     publisher?.setPublishAudio(true)
     publisher?.setPublishVideo(true)
 
-    session.publish(publisher)
+    sharedState.getPublishers().put(publisherId?: return, publisher?: return);
     if (publisher?.view != null) {
       publisher?.view?.layoutParams = LayoutParams(1000, 1000)
       this.addView(publisher?.view)
