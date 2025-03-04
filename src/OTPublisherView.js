@@ -27,7 +27,7 @@ export default class OTPublisherView extends React.Component {
   }
 
   initComponent = () => {
-    addEventListener('sessionConnected', )
+    addEventListener('sessionConnected', this.onSessionConnected)
     this.eventHandlers.streamCreated =
       this.props.eventHandlers?.streamCreated;
     this.eventHandlers.streamDestroyed =
