@@ -8,7 +8,7 @@ import {
   OT,
 } from './OT';
 import OTPublisherViewNative from './OTPublisherViewNativeComponent';
-import { addEventListener } from './helpers/OTSessionHelper';
+import { addEventListener, isConnected } from './helpers/OTSessionHelper';
 
 export default class OTPublisherView extends React.Component {
   eventHandlers = {};
@@ -41,16 +41,19 @@ export default class OTPublisherView extends React.Component {
       const isScreenSharing = (videoSource === 'screen');
       checkAndroidPermissions(audioTrack, videoTrack, isScreenSharing)
         .then(() => {
-          // TODO: initPublisher upon session connection
-          // this.initPublisher(publisherProperties);
+          if (isConnected()) {
+            OT.publish(this.state.publisherId);
+          };
         })
         .catch((error) => {
           // this.otrnEventHandler(error);
         });
     } else {
-      this.initPublisher(publisherProperties);
+      if (isConnected) {
+        OT.publish(this.state.publisherId);
+      };
     }
-    };
+  };
 
   render() {
     const { style, sessionId, streamId, publishAudio, publishVideo } =

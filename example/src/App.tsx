@@ -14,7 +14,7 @@ function App(): React.JSX.Element {
 
   const [streamIds, setStreamIds] = React.useState<string[]>([]);
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
-  const [connected, setConnected] = React.useState<boolean>(false);
+  const [publishStream, setPublishStream] = React.useState<boolean>(false);
 
   const sessionRef = useRef<OTSession>(null);
   const subscriberRef = useRef<OTSubscriberViewNative>(null);
@@ -41,7 +41,7 @@ function App(): React.JSX.Element {
         eventHandlers={{
           sessionConnected: (event: any) => {
             console.log('sessionConnected', event);
-            setConnected(true);
+            setTimeout(() => setPublishStream(true), 5000);
             sessionRef.current?.signal({
               type: 'greeting2',
               data: 'hello again from React Native',
@@ -62,7 +62,7 @@ function App(): React.JSX.Element {
         }}
         style={styles.session}
       >
-        {connected && (
+        {publishStream && (
           <OTPublisherView
             sessionId={sessionId}
             eventHandlers={{
