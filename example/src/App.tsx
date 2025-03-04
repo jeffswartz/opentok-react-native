@@ -68,6 +68,9 @@ function App(): React.JSX.Element {
             eventHandlers={{
               error: (event) => console.log('pub error', event),
               streamCreated: (event) => console.log('pub streamCreated', event),
+              rtcStatsReport: (event: any) => {
+                console.log('publisher onRtcStatsReport', event);
+              },
             }}
           />
         )}

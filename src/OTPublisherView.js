@@ -27,13 +27,15 @@ export default class OTPublisherView extends React.Component {
   }
 
   initComponent = () => {
-    addEventListener('sessionConnected', this.onSessionConnected)
+    addEventListener('sessionConnected', this.onSessionConnected);
     this.eventHandlers.streamCreated =
       this.props.eventHandlers?.streamCreated;
     this.eventHandlers.streamDestroyed =
       this.props.eventHandlers?.streamDestroyed;
     this.eventHandlers.error =
       this.props.eventHandlers?.error;
+    this.eventHandlers.rtcStatsReport =
+      this.props.eventHandlers?.rtcStatsReport;
     if (Platform.OS === 'android') {
       // const publisherProperties = sanitizeProperties(this.props.properties);
       const publisherProperties = { audioTrack: true, videoTrack: true, videoSource: 'camera' };
@@ -55,6 +57,11 @@ export default class OTPublisherView extends React.Component {
     }
   };
 
+  getRtcStatsReport() {
+    //NOSONAR - this method is exposed externally
+    OT.getPublisherRtcStatsReport(this.state.publisherId);
+  }
+
   render() {
     const { style, sessionId, streamId, publishAudio, publishVideo } =
       this.props;
@@ -69,6 +76,9 @@ export default class OTPublisherView extends React.Component {
         }}
         onStreamCreated={(event) => {
           this.eventHandlers.streamCreated && this.eventHandlers.streamCreated(event.nativeEvent);
+        }}
+        onRtcStatsReport={(event) => {
+          this.eventHandlers.rtcStatsReport && this.eventHandlers.rtcStatsReport(event.nativeEvent);
         }}
         style={style}
       />

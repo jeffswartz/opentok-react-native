@@ -45,6 +45,7 @@ export interface Spec extends TurboModule {
   disconnect(sessionId: string): Promise<void>;
   getSubscriberRtcStatsReport(): void;
   publish(publisherId: string): void;
+  getPublisherRtcStatsReport(publisherId: string): void;
   sendSignal(sessionId: string, type: string, data: string): void;
 }
 

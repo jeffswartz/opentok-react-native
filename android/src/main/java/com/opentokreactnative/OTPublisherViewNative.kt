@@ -16,7 +16,8 @@ import com.opentok.android.Stream
 import com.opentok.android.Publisher
 import com.opentok.android.PublisherKit
 import com.opentok.android.PublisherKit.PublisherListener
-// import com.opentok.android.PublisherKit.PublisherRtcStatsReportListener
+import com.opentok.android.PublisherKit.PublisherRtcStats
+import com.opentok.android.PublisherKit.PublisherRtcStatsReportListener
 
 class OTPublisherViewNative: FrameLayout, PublisherListener {
   private var session: Session? = null
@@ -133,10 +134,10 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
     emitOpenTokEvent("onError", payload)
   }
 
-  /*
-  override fun onRtcStatsReport(publisher: PublisherKit, jsonArrayOfReports: String) {
+  /* TO-DO -- arrays are not supported in CodeGen event property types
+  override fun onRtcStatsReport(publisher: PublisherKit, stats: Array<PublisherRtcStats>) {
       val statsArrayMap = Arguments.createArray().apply {
-        for (stat: PublisherKit.PublisherRtcStats in stats) {
+        for (stat: PublisherRtcStats in stats) {
           val statMap = Arguments.createMap().apply {
             putString("connectionId", stat.connectionId);
             putString("jsonArrayOfReports", stat.jsonArrayOfReports);
