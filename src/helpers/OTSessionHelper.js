@@ -8,8 +8,8 @@ const setIsConnected = (value) => {
 
 const isConnected = () => connected;
 
-const dispatchEvent = (event) => {
-  const listeners = eventHandlers[event.type]
+const dispatchEvent = (type, event) => {
+  const listeners = eventHandlers[type]
   if (listeners) {
     listeners.forEach(listener => {
       listener(event);
