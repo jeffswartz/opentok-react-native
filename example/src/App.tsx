@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { SafeAreaView, StyleSheet, Text } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
 import {
   OTSession,
@@ -62,9 +62,10 @@ function App(): React.JSX.Element {
         }}
         style={styles.session}
       >
-        {publishStream && (
+        {publishStream ? (
           <OTPublisherView
             sessionId={sessionId}
+            key="publisher"
             eventHandlers={{
               error: (event) => console.log('pub error', event),
               streamCreated: (event) => console.log('pub streamCreated', event),
@@ -72,31 +73,34 @@ function App(): React.JSX.Element {
                 console.log('publisher onRtcStatsReport', event);
               },
             }}
+            style={styles.videoview}
           />
-        )}
+        ) : null}
 
-        {streamIds?.map((streamId) => (
-          <OTSubscriberView
-            streamId={streamId}
-            sessionId={sessionId}
-            key={streamId}
-            ref={subscriberRef}
-            subscribeToVideo={subscribeToVideo}
-            subscribeToAudio={!subscribeToVideo}
-            style={styles.webview}
-            eventHandlers={{
-              subscriberConnected: (event: any) => {
-                console.log('subscriberConnected', event);
-                setTimeout(() => {
-                  subscriberRef.current?.getRtcStatsReport();
-                }, 4000);
-              },
-              onRtcStatsReport: (event: any) => {
-                console.log('onRtcStatsReport', event);
-              },
-            }}
-          />
-        ))}
+        <View key="subscriber" style={styles.subscriber}>
+          {streamIds?.map((streamId) => (
+            <OTSubscriberView
+              streamId={streamId}
+              sessionId={sessionId}
+              key={streamId}
+              ref={subscriberRef}
+              subscribeToVideo={subscribeToVideo}
+              subscribeToAudio={!subscribeToVideo}
+              style={styles.videoview}
+              eventHandlers={{
+                subscriberConnected: (event: any) => {
+                  console.log('subscriberConnected', event);
+                  setTimeout(() => {
+                    subscriberRef.current?.getRtcStatsReport();
+                  }, 4000);
+                },
+                onRtcStatsReport: (event: any) => {
+                  console.log('onRtcStatsReport', event);
+                },
+              }}
+            />
+          ))}
+        </View>
       </OTSession>
       <Text style={styles.text}>
         Stream count: {streamIds.length.toString()}
@@ -110,11 +114,14 @@ const styles = StyleSheet.create({
     margin: 10,
     fontSize: 20,
   },
-  webview: {
+  videoview: {
     width: '50%',
     height: '50%',
   },
   session: {
+    display: 'flex',
+  },
+  subscriber: {
     display: 'flex',
   },
 });
