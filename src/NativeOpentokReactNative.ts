@@ -71,7 +71,7 @@ export type Stream = {
   videoType: string; //  "screen" | "camera";
   connection: Connection;
   creationTime: string;
-}
+};
 
 export type StreamEvent = {
   streamId: string;
