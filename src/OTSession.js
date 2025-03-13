@@ -7,7 +7,7 @@ import { OT } from './OT';
 export default class OTSession extends Component {
   eventHandlers = {};
   async initSession(apiKey, sessionId, token) {
-    OT.onSessionConnected((event: SessionConnectEvent) => {
+    OT.onSessionConnected((event) => {
       this.eventHandlers.sessionConnected(event);
       if (Object.keys(this.props.signal).length > 0) {
         this.signal(this.props.signal);
@@ -40,7 +40,8 @@ export default class OTSession extends Component {
 
   initComponent = () => {
     this.initSession(this.props.apiKey, this.props.sessionId, this.props.token);
-    this.eventHandlers.sessionConnected = this.props.eventHandlers?.sessionConnected;
+    this.eventHandlers.sessionConnected =
+      this.props.eventHandlers?.sessionConnected;
   };
 
   signal(signalObj) {
@@ -50,11 +51,7 @@ export default class OTSession extends Component {
   render() {
     const { style, children, sessionId, apiKey, token } = this.props;
     if (children && sessionId && apiKey && token) {
-      return (
-        <View style={style}>
-          { children }
-        </View>
-      );
+      return <View style={style}>{children}</View>;
     }
     return <View />;
   }
@@ -69,9 +66,9 @@ OTSession.propTypes = {
     PropTypes.arrayOf(PropTypes.element),
   ]),
   style: ViewPropTypes.style,
-  eventHandlers: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  options: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  signal: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  eventHandlers: PropTypes.object,
+  options: PropTypes.object,
+  signal: PropTypes.object,
   encryptionSecret: PropTypes.string,
 };
 
