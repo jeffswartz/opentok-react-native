@@ -78,6 +78,7 @@ export default class OTPublisherView extends React.Component {
           this.eventHandlers.streamCreated && this.eventHandlers.streamCreated(event.nativeEvent);
         }}
         onRtcStatsReport={(event) => {
+          console.log('Publisher onRtcStatsReport', event.nativeEvent)
           this.eventHandlers.rtcStatsReport && this.eventHandlers.rtcStatsReport(event.nativeEvent);
         }}
         style={style}

@@ -11,16 +11,9 @@ type ErrorEvent = {
   message: string;
 };
 
-type PublisherRTCStatsReport = {
-  connectionId: string;
-  jsonArrayOfReports: string;
-};
-
-/* TO-DO -- arrays are not supported in CodeGen event property types
 type PublisherRTCStatsReportEvent = {
-  reports: PublisherRTCStatsReport[];
+  json: string;
 };
-*/
 
 export interface NativeProps extends ViewProps {
   sessionId: string;
@@ -29,7 +22,7 @@ export interface NativeProps extends ViewProps {
   publishVideo?: boolean;
   onError?: BubblingEventHandler<ErrorEvent> | null;
   onStreamCreated?: BubblingEventHandler<StreamEvent> | null;
-  onRtcStatsReport?: BubblingEventHandler<PublisherRTCStatsReport> | null;
+  onRtcStatsReport?: BubblingEventHandler<PublisherRTCStatsReportEvent> | null;
 }
 
 export default codegenNativeComponent<NativeProps>(

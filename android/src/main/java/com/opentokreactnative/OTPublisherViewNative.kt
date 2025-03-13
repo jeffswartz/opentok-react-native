@@ -19,7 +19,7 @@ import com.opentok.android.PublisherKit.PublisherListener
 import com.opentok.android.PublisherKit.PublisherRtcStats
 import com.opentok.android.PublisherKit.PublisherRtcStatsReportListener
 
-class OTPublisherViewNative: FrameLayout, PublisherListener {
+class OTPublisherViewNative: FrameLayout, PublisherListener, PublisherRtcStatsReportListener {
   private var session: Session? = null
   private var sessionId: String?= ""
   private var publisherId: String?= ""
@@ -134,21 +134,17 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
     emitOpenTokEvent("onError", payload)
   }
 
-  /* TO-DO -- arrays are not supported in CodeGen event property types
   override fun onRtcStatsReport(publisher: PublisherKit, stats: Array<PublisherRtcStats>) {
-      val statsArrayMap = Arguments.createArray().apply {
-        for (stat: PublisherRtcStats in stats) {
-          val statMap = Arguments.createMap().apply {
-            putString("connectionId", stat.connectionId);
-            putString("jsonArrayOfReports", stat.jsonArrayOfReports);
-          }
-          pushMap(statMap);
-        }
-      }
-
-      emitOpenTokEvent("onRtcStatsReport", statsArrayMap)
+    // Arrays are not supported in CodeGen event property types
+    // So we will need to convert the stats array to JSON
+    val fakeJson = """
+       [{"connectionId":"connection1","jsonArrayOfReports":"[{\\"reportData\\":\\"a\\"},{\\"reportData\\":\\"b\\"}]"},{"connectionId":"connection2","jsonArrayOfReports":"[{\\"reportData\\":\\"a\\"},{\\"reportData\\":\\"b\\"}]"}]
+    """
+    val payload = Arguments.createMap().apply {
+      putString("json", fakeJson)
+    }
+    emitOpenTokEvent("onRtcStatsReport", payload)
   }
-  */
 
   inner class OpenTokEvent(
       surfaceId: Int,
