@@ -29,6 +29,19 @@ export default class OTPublisherView extends React.Component {
     this.eventHandlers.streamDestroyed =
       this.props.eventHandlers?.streamDestroyed;
     this.eventHandlers.error = this.props.eventHandlers?.error;
+    this.eventHandlers.audioLevel = this.props.eventHandlers?.audioLevel;
+    this.eventHandlers.audioNetworkStats =
+      this.props.eventHandlers?.audioNetworkStats;
+    this.eventHandlers.rtcStatsReport =
+      this.props.eventHandlers?.rtcStatsReport;
+    this.eventHandlers.videoDisabled = this.props.eventHandlers?.videoDisabled;
+    this.eventHandlers.videoDisableWarning =
+      this.props.eventHandlers?.videoDisableWarning;
+    this.eventHandlers.videoDisableWarningLifted =
+      this.props.eventHandlers?.videoDisableWarningLifted;
+    this.eventHandlers.videoEnabled = this.props.eventHandlers?.videoEnabled;
+    this.eventHandlers.videoNetworkStats =
+      this.props.eventHandlers?.videoNetworkStats;
     if (Platform.OS === 'android') {
       // const publisherProperties = sanitizeProperties(this.props.properties);
       const publisherProperties = {
@@ -53,6 +66,11 @@ export default class OTPublisherView extends React.Component {
       }
     }
   };
+
+  getRtcStatsReport() {
+    //NOSONAR - this method is exposed externally
+    OT.getPublisherRtcStatsReport();
+  }
 
   render() {
     const { style, sessionId, publishAudio, publishVideo } = this.props;
@@ -79,8 +97,7 @@ export default class OTPublisherView extends React.Component {
 OTPublisherView.propTypes = {
   sessionId: PropTypes.string.isRequired,
   eventHandlers: PropTypes.object,
-  publishAudio: PropTypes.bool,
-  publishVideo: PropTypes.bool,
+  properties: PropTypes.object,
   style: ViewPropTypes.style,
 };
 
@@ -89,6 +106,22 @@ OTPublisherView.defaultProps = {
   properties: {
     publishAudio: true,
     publishVideo: true,
+    audioBitrate: 40000,
+    audioFallback: {
+      publisher: false,
+      subscriber: true,
+    },
+    audioTrack: true,
+    cameraPosition: 'front',
+    enableDtx: false,
+    frameRate: 30,
+    name: '',
+    publishCaptions: false,
+    scalableScreenshare: false,
+    resolution: 'MEDIUM',
+    videoTrack: true,
+    videoSource: 'camera',
+    videoContentHint: '',
   },
   style: {
     flex: 1,
