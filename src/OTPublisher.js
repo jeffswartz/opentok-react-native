@@ -8,7 +8,7 @@ import OTPublisherViewNative from './OTPublisherViewNativeComponent';
 import { addEventListener, isConnected } from './helpers/OTSessionHelper';
 import { sanitizeProperties } from './helpers/OTPublisherHelper';
 
-export default class OTPublisherView extends React.Component {
+export default class OTPublisher extends React.Component {
   eventHandlers = {};
   publisherProperties = {};
 
@@ -122,14 +122,14 @@ export default class OTPublisherView extends React.Component {
   }
 }
 
-OTPublisherView.propTypes = {
+OTPublisher.propTypes = {
   sessionId: PropTypes.string.isRequired,
   eventHandlers: PropTypes.object,
   properties: PropTypes.object,
   style: ViewPropTypes.style,
 };
 
-OTPublisherView.defaultProps = {
+OTPublisher.defaultProps = {
   eventHandlers: {},
   properties: {
     publishAudio: true,

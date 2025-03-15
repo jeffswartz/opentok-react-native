@@ -1,11 +1,7 @@
 import React, { useRef } from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
-import {
-  OTSession,
-  OTSubscriberView,
-  OTPublisherView,
-} from 'opentok-react-native';
+import { OTSession, OTSubscriberView, OTPublisher } from 'opentok-react-native';
 
 function App(): React.JSX.Element {
   const apiKey = '';
@@ -64,7 +60,7 @@ function App(): React.JSX.Element {
         style={styles.session}
       >
         {publishStream ? (
-          <OTPublisherView
+          <OTPublisher
             sessionId={sessionId}
             key="publisher"
             properties={{
