@@ -6,9 +6,11 @@ import uuid from 'react-native-uuid';
 import { checkAndroidPermissions, OT } from './OT';
 import OTPublisherViewNative from './OTPublisherViewNativeComponent';
 import { addEventListener, isConnected } from './helpers/OTSessionHelper';
+import { sanitizeProperties } from './helpers/OTPublisherHelper';
 
 export default class OTPublisherView extends React.Component {
   eventHandlers = {};
+  publisherProperties = {};
 
   constructor(props) {
     super(props);
@@ -16,6 +18,7 @@ export default class OTPublisherView extends React.Component {
     this.initComponent(props.eventHandlers);
     this.state = {
       publisherId: uuid.v4(),
+      publishVideo: props.properties.publishVideo,
     };
   }
 
@@ -42,14 +45,10 @@ export default class OTPublisherView extends React.Component {
     this.eventHandlers.videoEnabled = this.props.eventHandlers?.videoEnabled;
     this.eventHandlers.videoNetworkStats =
       this.props.eventHandlers?.videoNetworkStats;
+    this.publisherProperties = sanitizeProperties(this.props.properties);
+
     if (Platform.OS === 'android') {
-      // const publisherProperties = sanitizeProperties(this.props.properties);
-      const publisherProperties = {
-        audioTrack: true,
-        videoTrack: true,
-        videoSource: 'camera',
-      };
-      const { audioTrack, videoTrack, videoSource } = publisherProperties;
+      const { audioTrack, videoTrack, videoSource } = this.publisherProperties;
       const isScreenSharing = videoSource === 'screen';
       checkAndroidPermissions(audioTrack, videoTrack, isScreenSharing)
         .then(() => {
@@ -72,23 +71,52 @@ export default class OTPublisherView extends React.Component {
     OT.getPublisherRtcStatsReport();
   }
 
+  dispatchEvent(type, event) {
+    if (this.props.eventHandlers && this.props.eventHandlers[type]) {
+      this.props.eventHandlers[type](event);
+    }
+  }
+
   render() {
-    const { style, sessionId, publishAudio, publishVideo } = this.props;
     return (
       <OTPublisherViewNative
-        sessionId={sessionId}
+        sessionId={this.props.sessionId}
         publisherId={this.state.publisherId}
-        publishAudio={publishAudio}
-        publishVideo={publishVideo}
         onError={(event) => {
-          this.eventHandlers.error &&
-            this.eventHandlers.error(event.nativeEvent);
+          this.dispatchEvent('error', event);
         }}
         onStreamCreated={(event) => {
-          this.eventHandlers.streamCreated &&
-            this.eventHandlers.streamCreated(event.nativeEvent);
+          this.dispatchEvent('streamCreated', event);
         }}
-        style={style}
+        onStreamDestroyed={(event) => {
+          this.dispatchEvent('streamDestroyed', event);
+        }}
+        onAudioLevel={(event) => {
+          this.dispatchEvent('audioLevel', event);
+        }}
+        onAudioNetworkStats={(event) => {
+          this.dispatchEvent('audioNetworkStats', event);
+        }}
+        onRtcStatsReport={(event) => {
+          this.dispatchEvent('rtcStatsReport', event);
+        }}
+        onVideoDisabled={(event) => {
+          this.dispatchEvent('videoDisabled', event);
+        }}
+        onVideoDisableWarning={(event) => {
+          this.dispatchEvent('videoDisableWarning', event);
+        }}
+        onVideoDisableWarningLifted={(event) => {
+          this.dispatchEvent('videoDisableWarningLifted', event);
+        }}
+        onVideoEnabled={(event) => {
+          this.dispatchEvent('videoEnabled', event);
+        }}
+        onVideoNetworkStats={(event) => {
+          this.dispatchEvent('videoNetworkStats', event);
+        }}
+        style={this.props.style}
+        {...this.props.properties}
       />
     );
   }

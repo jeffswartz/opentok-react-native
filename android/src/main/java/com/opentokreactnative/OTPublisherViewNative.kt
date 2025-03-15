@@ -141,8 +141,8 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
     )
     publisher?.setPublisherListener(this)
     // publisher?.setRtcStatsReportListener(this)
-    publisher?.setPublishAudio(true)
-    publisher?.setPublishVideo(true)
+    publisher?.setPublishAudio(publishAudio)
+    publisher?.setPublishVideo(publishVideo)
 
     sharedState.getPublishers().put(publisherId?: return, publisher?: return);
     if (publisher?.view != null) {
