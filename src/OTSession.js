@@ -7,30 +7,40 @@ import { dispatchEvent, setIsConnected } from './helpers/OTSessionHelper';
 
 export default class OTSession extends Component {
   eventHandlers = {};
+
+  dispatchLocalEvent(type, event) {
+    if (this.props.eventHandlers && this.props.eventHandlers[type]) {
+      this.props.eventHandlers[type](event);
+    }
+  }
+
   async initSession(apiKey, sessionId, token) {
     OT.onSessionConnected((event) => {
       this.eventHandlers.sessionConnected(event);
       setIsConnected(true);
-      dispatchEvent('sessionConnected', event);
+      this.dispatchLocalEvent('sessionConnected', event);
       if (Object.keys(this.props.signal).length > 0) {
         this.signal(this.props.signal);
       }
     });
     OT.initSession(apiKey, sessionId, {});
     OT.onStreamCreated((event) => {
-      this.eventHandlers.streamCreated(event);
+      this.dispatchLocalEvent('streamCreated', event);
+      console.log(77234234234);
+      dispatchEvent('streamCreated', event);
     });
-    /* TO DO:
+
     OT.onStreamDestroyed((event) => {
-      this.eventHandlers.onStreamDestroyed(event);
+      this.dispatchLocalEvent('streamDestroyed', event);
+      dispatchEvent('streamDestroyed', event);
     });
-    */
+
     OT.onSignalReceived((event) => {
-      this.eventHandlers.signal(event);
+      this.dispatchLocalEvent('signal', event);
     });
 
     OT.onSessionError((event) => {
-      this.eventHandlers.error(event);
+      this.dispatchLocalEvent('error', event);
     });
     OT.connect(sessionId, token);
   }

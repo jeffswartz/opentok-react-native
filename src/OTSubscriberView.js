@@ -21,6 +21,12 @@ export default class OTSubscriberView extends React.Component {
     this.initComponent(props.eventHandlers);
   }
 
+  dispatchLocalEvent(type, event) {
+    if (this.props.eventHandlers && this.props.eventHandlers[type]) {
+      this.props.eventHandlers[type](event);
+    }
+  }
+
   initComponent = () => {
     this.eventHandlers.subscriberConnected =
       this.props.eventHandlers?.subscriberConnected;
@@ -43,10 +49,10 @@ export default class OTSubscriberView extends React.Component {
         subscribeToAudio={subscribeToAudio}
         subscribeToVideo={subscribeToVideo}
         onSubscriberConnected={(event) => {
-          this.eventHandlers.subscriberConnected(event.nativeEvent);
+          this.eventHandlers?.subscriberConnected && this.eventHandlers.subscriberConnected(event.nativeEvent);
         }}
         onRtcStatsReport={(event) => {
-          this.eventHandlers.onRtcStatsReport(event.nativeEvent);
+          this.eventHandlers?.onRtcStatsReport && this.eventHandlers.onRtcStatsReport(event.nativeEvent);
         }}
         style={style}
       />

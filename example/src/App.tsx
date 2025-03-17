@@ -1,7 +1,12 @@
 import React, { useRef } from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
-import { OTSession, OTSubscriberView, OTPublisher } from 'opentok-react-native';
+import {
+  OTSession,
+  OTSubscriber,
+  OTSubscriberView,
+  OTPublisher,
+} from 'opentok-react-native';
 
 function App(): React.JSX.Element {
   const apiKey = '';
@@ -18,6 +23,7 @@ function App(): React.JSX.Element {
     setSubscribeToVideo((val) => !val);
   };
   const logAllEvents = false;
+  const useIndividualSubscriberViews = true;
 
   React.useEffect(() => {
     setInterval(() => {
@@ -101,30 +107,43 @@ function App(): React.JSX.Element {
           />
         ) : null}
 
-        <View key="subscriber" style={styles.subscriber}>
-          {streamIds?.map((streamId) => (
-            <OTSubscriberView
-              streamId={streamId}
-              sessionId={sessionId}
-              key={streamId}
-              ref={subscriberRef}
-              subscribeToVideo={subscribeToVideo}
-              subscribeToAudio={!subscribeToVideo}
-              style={styles.videoview}
-              eventHandlers={{
-                subscriberConnected: (event: any) => {
-                  console.log('subscriberConnected', event);
-                  setTimeout(() => {
-                    subscriberRef.current?.getRtcStatsReport();
-                  }, 4000);
-                },
-                onRtcStatsReport: (event: any) => {
-                  console.log('onRtcStatsReport', event);
-                },
-              }}
-            />
-          ))}
-        </View>
+        <OTSubscriber
+          key="subscriber"
+          sessionId={sessionId}
+          style={styles.subscriber}
+        >
+          {useIndividualSubscriberViews
+            ? (streamIds) => {
+                if (streamIds.length === 0) {
+                  return null;
+                }
+                return streamIds.map((streamId) => {
+                  return (
+                    <OTSubscriberView
+                      streamId={streamId}
+                      sessionId={sessionId}
+                      key={streamId}
+                      ref={subscriberRef}
+                      subscribeToVideo={subscribeToVideo}
+                      subscribeToAudio={!subscribeToVideo}
+                      style={styles.videoview}
+                      eventHandlers={{
+                        subscriberConnected: (event: any) => {
+                          console.log('subscriberConnected', event);
+                          setTimeout(() => {
+                            subscriberRef.current?.getRtcStatsReport();
+                          }, 4000);
+                        },
+                        onRtcStatsReport: (event: any) => {
+                          console.log('onRtcStatsReport', event);
+                        },
+                      }}
+                    />
+                  );
+                });
+              }
+            : null}
+        </OTSubscriber>
       </OTSession>
       <Text style={styles.text}>
         Stream count: {streamIds.length.toString()}
