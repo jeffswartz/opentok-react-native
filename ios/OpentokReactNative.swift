@@ -286,7 +286,7 @@ private class SessionDelegateHandler: NSObject, OTSessionDelegate {
                                                      newValue: newValue,
                                                      isPublisherStream: isPublisherStream)
         }
-        //jeff todo
+
         // Audio observer
         let audioObserver = stream.observe(\.hasAudio, options: [.old, .new]) { stream, change in
             guard let oldValue = change.oldValue,
@@ -312,9 +312,22 @@ private class SessionDelegateHandler: NSObject, OTSessionDelegate {
                                                      newValue: newValue,
                                                      isPublisherStream: isPublisherStream)
         }
+
+        // Captions observer
+        let captionsObserver = stream.observe(\.hasCaptions, options: [.old, .new]) { stream, change in
+            guard let oldValue = change.oldValue,
+                  let newValue = change.newValue,
+                  oldValue != newValue else { return }
+            
+            self.checkAndEmitStreamPropertyChangeEvent(streamId,
+                                                     changedProperty: "hasCaptions",
+                                                     oldValue: oldValue,
+                                                     newValue: newValue,
+                                                     isPublisherStream: isPublisherStream)
+        }
         
         // Store all observers
-        OTRN.sharedState.streamObservers.updateValue([dimensionsObserver, audioObserver, videoObserver], forKey: streamId)
+        OTRN.sharedState.streamObservers.updateValue([dimensionsObserver, audioObserver, videoObserver, captionsObserver], forKey: streamId)
     }
     func checkAndEmitStreamPropertyChangeEvent(_ streamId: String, changedProperty: String, oldValue: Any, newValue: Any, isPublisherStream: Bool) {
         guard let stream = isPublisherStream ? OTRN.sharedState.publisherStreams[streamId] : OTRN.sharedState.subscriberStreams[streamId] else { return }
