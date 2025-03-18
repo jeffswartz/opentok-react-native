@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <OpentokReactNative/RNOpentokReactNativeSpec.h>
 #import <OpentokReactNative-Swift.h> 
-#import <OpenTok/OpenTok.h>
+
 
 
 typedef JS::NativeOpentokReactNative::SessionOptions RN_SessionOptions;
@@ -10,7 +10,6 @@ typedef JS::NativeOpentokReactNative::SessionOptions RN_SessionOptions;
 @end
 
 @implementation OpentokReactNative {
-    OTSession *_session;
     OpentokReactNativeImpl *impl;
 }
 
