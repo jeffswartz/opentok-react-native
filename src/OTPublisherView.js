@@ -12,11 +12,11 @@ export default class OTPublisherView extends React.Component {
 
   constructor(props) {
     super(props);
-    this.eventHandlers = props.eventHandlers;
-    this.initComponent(props.eventHandlers);
     this.state = {
       publisherId: uuid.v4(),
     };
+    this.eventHandlers = props.eventHandlers;
+    this.initComponent(props.eventHandlers);
   }
 
   onSessionConnected = () => {

@@ -37,7 +37,7 @@ using namespace facebook::react;
         _props = defaultProps;
 
         _impl = [[OTPublisherViewNativeImpl alloc] initWithView:self];
-        self.contentView = _impl.view;
+        self.contentView = _impl.publisherView;
     }
     return self;
 }

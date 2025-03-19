@@ -3,48 +3,37 @@ import OpenTok
 
 @objc public class OTPublisherViewNativeImpl: NSObject {
     private var publisher: OTPublisher?
-    @objc public let view: UIView
-    fileprivate weak var componentView: OTPublisherViewNativeComponentView?
+    fileprivate weak var strictUIViewContainer: OTPublisherViewNativeComponentView?
     fileprivate var publisherDelegateHandler: PublisherDelegateHandler?
-    
-    @objc public init(view: UIView) {
-        self.view = view
-        if let cv = view as? OTPublisherViewNativeComponentView {
-            self.componentView = cv
-        }
+    fileprivate var publisherUIView: UIView?
+
+   @objc public var publisherView: UIView {
+       if let publisherUIView = publisherUIView {
+           return publisherUIView
+       }
+        return UIView()
+    }
+    @objc public init(view: OTPublisherViewNativeComponentView) {
+        self.strictUIViewContainer = view
         super.init()
+        
+        // Initialize publisher right away
+        publisherDelegateHandler = PublisherDelegateHandler(impl: self)
+        publisher = OTPublisher(delegate: publisherDelegateHandler)
+
+        // Set publisher view as content view
+        if let pubView = publisher?.view {
+            pubView.frame = view.bounds
+            publisherUIView = pubView
+        }
     }
     
     @objc public func setSessionId(_ sessionId: String) {
-        guard let session = OTRN.sharedState.sessions[sessionId] else {
-            componentView?.handleError(["code": "OTPublisher Error", "message": "Session not found"])
-            return
-        }
-        
-        // Clean up existing publisher if needed
-        cleanupPublisher()
-        
-        // Setup will happen when publisherId is set
+        // TODO : do we allow to unpublish or will this ever change
     }
     
     @objc public func setPublisherId(_ publisherId: String) {
-        guard let session = OTRN.sharedState.sessions[publisherId] else { return }
-        
-        do {
-            publisherDelegateHandler = PublisherDelegateHandler(impl: self)
-            publisher = OTPublisher(delegate: publisherDelegateHandler)
-            try session.publish(publisher!)
-            
-            if let pubView = publisher?.view {
-                pubView.frame = view.bounds
-                view.addSubview(pubView)
-            }
-            
-            OTRN.sharedState.publishers[publisherId] = publisher
-            
-        } catch {
-            componentView?.handleError(["code": "OTPublisher Error", "message": error.localizedDescription])
-        }
+        // TODO : do we allow to unpublish or will this ever change
     }
     
     @objc public func setPublishAudio(_ publishAudio: Bool) {
@@ -55,13 +44,13 @@ import OpenTok
         publisher?.publishVideo = publishVideo
     }
     
-    private func cleanupPublisher() {
+    deinit {
         if let pub = publisher {
-            pub.view?.removeFromSuperview()
             pub.delegate = nil
             publisherDelegateHandler = nil
             publisher = nil
         }
+       
     }
 }
 
@@ -74,18 +63,18 @@ private class PublisherDelegateHandler: NSObject, OTPublisherDelegate {
     }
     
     public func publisher(_ publisher: OTPublisherKit, streamCreated stream: OTStream) {
-        impl?.componentView?.handleStreamCreated(["streamId": stream.streamId])
+        impl?.strictUIViewContainer?.handleStreamCreated(["streamId": stream.streamId])
     }
     
     public func publisher(_ publisher: OTPublisherKit, didFailWithError error: OTError) {
-        impl?.componentView?.handleError([
+        impl?.strictUIViewContainer?.handleError([
             "code": String(error.code),
             "message": error.localizedDescription
         ])
     }
     
     public func publisher(_ publisher: OTPublisherKit, streamDestroyed stream: OTStream) {
-        impl?.componentView?.handleStreamDestroyed(["streamId": stream.streamId])
+        impl?.strictUIViewContainer?.handleStreamDestroyed(["streamId": stream.streamId])
     }
 }
 
