@@ -11,15 +11,25 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.WritableMap;
 import com.opentok.android.Connection;
+import com.opentok.android.MuteForcedInfo;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
+import com.opentok.android.PublisherKit;
 import com.opentok.android.Session;
 import com.opentok.android.Session.SessionListener;
 import com.opentok.android.Session.SignalListener;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
+import com.opentokreactnative.utils.Utils;
 
-public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec implements SessionListener, SignalListener {
+
+public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec implements SessionListener, SignalListener,
+        Session.ConnectionListener,
+        Session.ReconnectionListener,
+        Session.ArchiveListener,
+        Session.MuteListener,
+        Session.StreamPropertiesListener,
+        Session.StreamCaptionsPropertiesListener{
 
   public static final String NAME = "OpentokReactNative";
 
@@ -95,12 +105,22 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
 
   @Override
   public void setAudioTransformers(String publisherId, ReadableArray audioTransformers) {
-    // TODO
+    ConcurrentHashMap<String, Publisher> publishers = sharedState.getPublishers();
+    Publisher publisher = publishers.get(publisherId);
+    if (publisher != null) {
+      ArrayList<PublisherKit.AudioTransformer> nativeAudioTransformers = Utils.sanitizeAudioTransformerList(publisher, audioTransformers);
+      publisher.setAudioTransformers(nativeAudioTransformers);
+    }
   }
 
-  @Override
+  //@Override
   public void setVideoTransformers(String publisherId, ReadableArray videoTransformers) {
-    // TODO
+    ConcurrentHashMap<String, Publisher> publishers = sharedState.getPublishers();
+    Publisher publisher = publishers.get(publisherId);
+    if (publisher != null) {
+      ArrayList<PublisherKit.VideoTransformer> nativeVideoTransformers = Utils.sanitizeVideoTransformerList(publisher, videoTransformers);
+      publisher.setVideoTransformers(nativeVideoTransformers);
+    }
   }
 
   @Override
@@ -152,5 +172,65 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
     payload.putString("type", type);
     payload.putString("data", data);
     emitOnSignalReceived(payload);
+  }
+
+  @Override
+  public void onArchiveStarted(Session session, String s, String s1) {
+
+  }
+
+  @Override
+  public void onArchiveStopped(Session session, String s) {
+
+  }
+
+  @Override
+  public void onConnectionCreated(Session session, Connection connection) {
+
+  }
+
+  @Override
+  public void onConnectionDestroyed(Session session, Connection connection) {
+
+  }
+
+  @Override
+  public void onMuteForced(Session session, MuteForcedInfo muteForcedInfo) {
+
+  }
+
+  @Override
+  public void onReconnecting(Session session) {
+
+  }
+
+  @Override
+  public void onReconnected(Session session) {
+
+  }
+
+  @Override
+  public void onStreamHasCaptionsChanged(Session session, Stream stream, boolean b) {
+
+  }
+
+  @Override
+  public void onStreamHasAudioChanged(Session session, Stream stream, boolean b) {
+
+  }
+
+  @Override
+  public void onStreamHasVideoChanged(Session session, Stream stream, boolean b) {
+
+  }
+
+  @Override
+  public void onStreamVideoDimensionsChanged(Session session, Stream stream, int i, int i1) {
+
+  }
+
+  @Override
+  public void onStreamVideoTypeChanged(Session session, Stream stream, Stream.StreamVideoType streamVideoType) {
+
   }
 }
