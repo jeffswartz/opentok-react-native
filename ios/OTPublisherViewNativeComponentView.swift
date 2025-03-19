@@ -1,20 +1,23 @@
 import Foundation
 import OpenTok
 
-@objc public class OTPublisherViewNativeImpl: NSObject  {
+@objc public class OTPublisherViewNativeImpl: NSObject {
     private var publisher: OTPublisher?
-    private var view: UIView
-    private weak var componentView: OTPublisherViewNativeComponentView?
+    @objc public let view: UIView
+    fileprivate weak var componentView: OTPublisherViewNativeComponentView?
+    fileprivate var publisherDelegateHandler: PublisherDelegateHandler?
     
-    @objc public init(view: UIView, componentView: OTPublisherViewNativeComponentView) {
+    @objc public init(view: UIView) {
         self.view = view
-        self.componentView = componentView
+        if let cv = view as? OTPublisherViewNativeComponentView {
+            self.componentView = cv
+        }
         super.init()
     }
     
     @objc public func setSessionId(_ sessionId: String) {
         guard let session = OTRN.sharedState.sessions[sessionId] else {
-            handleError(code: "OTPublisher Error", message: "Session not found")
+            componentView?.handleError(["code": "OTPublisher Error", "message": "Session not found"])
             return
         }
         
@@ -28,7 +31,8 @@ import OpenTok
         guard let session = OTRN.sharedState.sessions[publisherId] else { return }
         
         do {
-            publisher = OTPublisher(delegate: nil)
+            publisherDelegateHandler = PublisherDelegateHandler(impl: self)
+            publisher = OTPublisher(delegate: publisherDelegateHandler)
             try session.publish(publisher!)
             
             if let pubView = publisher?.view {
@@ -39,7 +43,7 @@ import OpenTok
             OTRN.sharedState.publishers[publisherId] = publisher
             
         } catch {
-            handleError(code: "OTPublisher Error", message: error.localizedDescription)
+            componentView?.handleError(["code": "OTPublisher Error", "message": error.localizedDescription])
         }
     }
     
@@ -55,19 +59,33 @@ import OpenTok
         if let pub = publisher {
             pub.view?.removeFromSuperview()
             pub.delegate = nil
+            publisherDelegateHandler = nil
             publisher = nil
         }
     }
+}
+
+private class PublisherDelegateHandler: NSObject, OTPublisherDelegate {
+    weak var impl: OTPublisherViewNativeImpl?
     
-    private func handleError(code: String, message: String) {
-        componentView?.handleError(code, message: message)
+    init(impl: OTPublisherViewNativeImpl) {
+        self.impl = impl
+        super.init()
     }
+    
     public func publisher(_ publisher: OTPublisherKit, streamCreated stream: OTStream) {
-        componentView?.handleStreamCreated(stream.streamId)
+        impl?.componentView?.handleStreamCreated(["streamId": stream.streamId])
     }
     
     public func publisher(_ publisher: OTPublisherKit, didFailWithError error: OTError) {
-        handleError(code: String(error.code), message: error.localizedDescription)
+        impl?.componentView?.handleError([
+            "code": String(error.code),
+            "message": error.localizedDescription
+        ])
+    }
+    
+    public func publisher(_ publisher: OTPublisherKit, streamDestroyed stream: OTStream) {
+        impl?.componentView?.handleStreamDestroyed(["streamId": stream.streamId])
     }
 }
 

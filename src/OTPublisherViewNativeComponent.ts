@@ -18,6 +18,7 @@ export interface NativeProps extends ViewProps {
   publishVideo?: boolean;
   onError?: BubblingEventHandler<ErrorEvent> | null;
   onStreamCreated?: BubblingEventHandler<StreamEvent> | null;
+  onStreamDestroyed?: BubblingEventHandler<StreamEvent> | null;
 }
 
 export default codegenNativeComponent<NativeProps>(

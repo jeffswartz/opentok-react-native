@@ -35,12 +35,9 @@ using namespace facebook::react;
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const OTPublisherViewNativeProps>();
         _props = defaultProps;
-        
-        _view = [[UIView alloc] init];
-        self.contentView = _view;
-        
-        // Initialize the Swift implementation
-        _impl = [[OTPublisherViewNativeImpl alloc] initWithView:_view componentView:self];
+
+        _impl = [[OTPublisherViewNativeImpl alloc] initWithView:self];
+        self.contentView = _impl.view;
     }
     return self;
 }
@@ -69,31 +66,40 @@ using namespace facebook::react;
     [super updateProps:props oldProps:oldProps];
 }
 
-- (void)handleStreamCreated:(NSString *)streamId
+
+- (void)handleStreamCreated:(NSDictionary *)eventData
 {
-   // Get the event emitter
-   auto const &eventEmitter = *std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
-   
-   // Create and emit the event
-   OTPublisherViewNativeEventEmitter::OnStreamCreated event = {
-       .streamId = RCTStringFromNSString(streamId)
-   };
-   eventEmitter.onStreamCreated(event);
+    if (_eventEmitter) {
+        auto eventEmitter = std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
+        OTPublisherViewNativeEventEmitter::OnStreamCreated payload {
+            .streamId = std::string([eventData[@"streamId"] UTF8String])
+        };
+        eventEmitter->onStreamCreated(std::move(payload));
+    }
 }
 
-- (void)handleError:(NSString *)code message:(NSString *)message
+- (void)handleError:(NSDictionary *)eventData
 {
-   // Get the event emitter
-   auto const &eventEmitter = *std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
-   
-   // Create and emit the event
-   OTPublisherViewNativeEventEmitter::OnError event = {
-       .code = RCTStringFromNSString(code),
-       .message = RCTStringFromNSString(message)
-   };
-   eventEmitter.onError(event);
+    if (_eventEmitter) {
+        auto eventEmitter = std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
+        OTPublisherViewNativeEventEmitter::OnError payload {
+            .code = std::string([eventData[@"code"] UTF8String]),
+            .message = std::string([eventData[@"message"] UTF8String])
+        };
+        eventEmitter->onError(std::move(payload));
+    }
 }
 
+- (void)handleStreamDestroyed:(NSDictionary *)eventData
+{
+    if (_eventEmitter) {
+        auto eventEmitter = std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
+        OTPublisherViewNativeEventEmitter::OnStreamDestroyed payload {
+            .streamId = std::string([eventData[@"streamId"] UTF8String])
+        };
+        eventEmitter->onStreamDestroyed(std::move(payload));
+    }
+}
 @end
 
 Class<RCTComponentViewProtocol> OTPublisherViewNativeCls(void)

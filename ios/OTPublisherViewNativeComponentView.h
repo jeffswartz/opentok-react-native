@@ -3,8 +3,9 @@
 
 
 @interface OTPublisherViewNativeComponentView : NSObject
-- (void)handleStreamCreated:(NSString *)streamId;
-- (void)handleError:(NSString *)code message:(NSString *)message;
+- (void)handleStreamCreated:(NSDictionary *)eventData;
+- (void)handleStreamDestroyed:(NSDictionary *)eventData;
+- (void)handleError:(NSDictionary *)eventData;
 @end
 
 
