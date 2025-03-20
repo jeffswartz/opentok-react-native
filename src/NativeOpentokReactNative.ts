@@ -16,9 +16,7 @@ export type Connection = {
 
 export type ConnectionEvent = {
   sessionId: string;
-  creationTime: string;
-  data: string;
-  connectionId: string;
+  connection: Connection;
 };
 
 export type EmptyEvent = {};
