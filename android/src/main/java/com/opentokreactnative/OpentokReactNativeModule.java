@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.WritableMap;
@@ -83,6 +84,21 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
     }
   }
 
+  @Override
+  public void disableForceMute(String sessionId, Promise promise) {
+    // TODO
+  }
+
+  @Override
+  public void forceMuteAll(String sesssionId, ReadableArray excludedStreamIds, Promise promise) {
+    // TODO
+  }
+
+  @Override
+  public void forceMuteStream(String sesssionId, String streamId, Promise promise) {
+    // TODO
+  }
+
   /*
   @Override
   public void getPublisherRtcStatsReport(String publisherId) {
@@ -93,6 +109,16 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
     }
   }
   */
+
+  @Override
+  public void reportIssue(String sessionId, Promise promise) {
+    // TODO
+  }
+
+  @Override
+  public void setEncryptionSecret(String sessionId, String secret, Promise promise) {
+    // TODO
+  }
 
   @Override
   public void onConnected(Session session) {
