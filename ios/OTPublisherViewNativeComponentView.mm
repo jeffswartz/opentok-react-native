@@ -30,13 +30,38 @@ using namespace facebook::react;
     return concreteComponentDescriptorProvider<OTPublisherViewNativeComponentDescriptor>();
 }
 
+- (NSDictionary *)createPublisherPropsFromViewProps:(const OTPublisherViewNativeProps &)viewProps {
+    return @{
+        @"videoTrack": @(viewProps.videoTrack),
+        @"audioTrack": @(viewProps.audioTrack),
+        @"audioBitrate": @(viewProps.audioBitrate),
+        @"frameRate": @(viewProps.frameRate),
+        @"resolution": RCTNSStringFromString(viewProps.resolution),
+        @"enableDtx": @(viewProps.enableDtx),
+        @"name": RCTNSStringFromString(viewProps.name),
+        @"publisherAudioFallback": @(viewProps.publisherAudioFallback),
+        @"subscriberAudioFallback": @(viewProps.subscriberAudioFallback),
+        @"videoContentHint": RCTNSStringFromString(viewProps.videoContentHint),
+        @"videoSource": RCTNSStringFromString(viewProps.videoSource),
+        @"cameraPosition": RCTNSStringFromString(viewProps.cameraPosition),
+        @"scalableScreenshare": @(viewProps.scalableScreenshare),
+        @"audioFallbackEnabled": @(viewProps.audioFallbackEnabled),
+        @"publishAudio": @(viewProps.publishAudio),
+        @"publishVideo": @(viewProps.publishVideo),
+        @"publishCaptions": @(viewProps.publishCaptions)
+    };
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const OTPublisherViewNativeProps>();
         _props = defaultProps;
 
-        _impl = [[OTPublisherViewNativeImpl alloc] initWithView:self];
+        const auto &viewProps = *std::static_pointer_cast<const OTPublisherViewNativeProps>(_props);
+        NSDictionary *props = [self createPublisherPropsFromViewProps:viewProps];
+        
+        _impl = [[OTPublisherViewNativeImpl alloc] initWithView:self properties:props];
         self.contentView = _impl.publisherView;
     }
     return self;

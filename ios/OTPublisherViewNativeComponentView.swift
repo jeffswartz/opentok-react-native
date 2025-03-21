@@ -1,6 +1,7 @@
 import Foundation
 import OpenTok
 
+
 @objc public class OTPublisherViewNativeImpl: NSObject {
     private var publisher: OTPublisher?
     private var currentSession: OTSession?
@@ -14,17 +15,59 @@ import OpenTok
        }
         return UIView()
     }
-    @objc public init(view: OTPublisherViewNativeComponentView) {
+@objc public init(view: OTPublisherViewNativeComponentView, properties: [String: Any]) {
         self.strictUIViewContainer = view
         super.init()
-        
-        // Initialize publisher right away
-        publisherDelegateHandler = PublisherDelegateHandler(impl: self)
-        publisher = OTPublisher(delegate: publisherDelegateHandler)
+        initPublisher(withProperties: properties)
+    }
 
-        // Set publisher view as content view
+    private func initPublisher(withProperties properties: [String: Any]){
+let publisherProperties = OTPublisherSettings()
+        publisherProperties.videoTrack = Utils.sanitizeBooleanProperty(properties["videoTrack"] as Any)
+        publisherProperties.audioTrack = Utils.sanitizeBooleanProperty(properties["audioTrack"] as Any)
+        if let audioBitrate = properties["audioBitrate"] as? Int32 {
+            publisherProperties.audioBitrate = audioBitrate
+        }
+        publisherProperties.cameraFrameRate = Utils.sanitizeFrameRate(properties["frameRate"] as Any)
+        publisherProperties.cameraResolution = Utils.sanitizeCameraResolution(properties["resolution"] as? String ?? "MEDIUM")
+        publisherProperties.enableOpusDtx = Utils.sanitizeBooleanProperty(properties["enableDtx"] as Any)
+        publisherProperties.name = properties["name"] as? String
+        publisherProperties.publisherAudioFallbackEnabled = Utils.sanitizeBooleanProperty(properties["publisherAudioFallback"] as Any)
+        publisherProperties.subscriberAudioFallbackEnabled = Utils.sanitizeBooleanProperty(properties["subscriberAudioFallback"] as Any)
+        publisherProperties.videoCapture?.videoContentHint = .none 
+        
+        publisherDelegateHandler = PublisherDelegateHandler(impl: self) 
+        
+        guard let newPublisher = OTPublisher(delegate: publisherDelegateHandler, settings: publisherProperties) else {
+            // TODO: Handle error
+            return
+        }
+        
+        publisher = newPublisher
+        
+        // Handle video source
+        let videoSource = properties["videoSource"] as? String ?? "camera"
+        if videoSource == "screen" {
+            // TODO: Implement screen sharing logic
+            publisher?.videoType = .screen
+            // Need to handle screen capture view
+        } else {
+            let cameraPosition = properties["cameraPosition"] as? String ?? "front"
+            publisher?.cameraPosition = cameraPosition == "front" ? .front : .back
+        }
+        
+        publisher?.audioFallbackEnabled = Utils.sanitizeBooleanProperty(properties["audioFallbackEnabled"] as Any)
+        publisher?.publishAudio = Utils.sanitizeBooleanProperty(properties["publishAudio"] as Any)
+        publisher?.publishVideo = Utils.sanitizeBooleanProperty(properties["publishVideo"] as Any)
+        publisher?.publishCaptions = Utils.sanitizeBooleanProperty(properties["publishCaptions"] as Any)
+        
+        // TODO: Set up delegates
+        // publisher?.audioLevelDelegate = self
+        // publisher?.networkStatsDelegate = self
+        // publisher?.rtcStatsReportDelegate = self
+        
         if let pubView = publisher?.view {
-            pubView.frame = view.bounds
+            pubView.frame = strictUIViewContainer?.bounds ?? .zero
             publisherUIView = pubView
         }
     }
