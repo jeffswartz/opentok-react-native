@@ -5,7 +5,11 @@ import PropTypes from 'prop-types';
 import uuid from 'react-native-uuid';
 import { checkAndroidPermissions, OT } from './OT';
 import OTPublisherViewNative from './OTPublisherViewNativeComponent';
-import { addEventListener, dispatchEvent, isConnected } from './helpers/OTSessionHelper';
+import {
+  addEventListener,
+  dispatchEvent,
+  isConnected,
+} from './helpers/OTSessionHelper';
 import { sanitizeProperties } from './helpers/OTPublisherHelper';
 import OTContext from './contexts/OTContext';
 
