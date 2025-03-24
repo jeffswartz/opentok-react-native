@@ -134,6 +134,30 @@ import React
         }
     }
 
+@objc public func publish(_ publisherId: String,
+                         resolve: @escaping RCTPromiseResolveBlock,
+                         reject: @escaping RCTPromiseRejectBlock) -> Void {
+    var error: OTError?
+    
+    guard let publisher = OTRN.sharedState.publishers[publisherId] else {
+        reject("ERROR", "Error publishing. Could not find native publisher instance", nil)
+        return
+    }
+    
+    guard let otSession = otSession else {
+        reject("ERROR", "Error connecting to session. Could not find native session instance", nil)
+        return
+    }
+    
+    otSession.publish(publisher, error: &error)
+    
+    if let err = error {
+        reject("ERROR", err.localizedDescription, err)
+    } else {
+        resolve(nil)
+    }
+}
+
 @objc public func forceMuteAll(_ sessionId: String,
                                   excludedStreamIds: Array<String>,
                                   resolve: @escaping RCTPromiseResolveBlock,
@@ -217,7 +241,7 @@ private class SessionDelegateHandler: NSObject, OTSessionDelegate {
     }
     
     public func sessionDidConnect(_ session: OTSession) {
-        // Handle callback from shared state
+        // Handle callback from shared state 
         guard let callback = OTRN.sharedState.sessionConnectCallbacks[session.sessionId] else { return }
         callback([NSNull()])
         
@@ -380,3 +404,125 @@ private class SessionDelegateHandler: NSObject, OTSessionDelegate {
         impl?.ot?.emit(onSessionDidReconnect: sessionInfo)
     }
 }
+
+/*
+ public func initPublisher(publisherId: String
+ ) {
+     let publisherProperties = OTPublisherSettings()
+
+     publisherProperties.videoTrack = Utils.sanitizeBooleanProperty(
+         properties["videoTrack"] as Any)
+     publisherProperties.audioTrack = Utils.sanitizeBooleanProperty(
+         properties["audioTrack"] as Any)
+     if let audioBitrate = properties["audioBitrate"] as? Int32 {
+         publisherProperties.audioBitrate = audioBitrate
+     }
+     publisherProperties.cameraFrameRate = Utils.sanitizeFrameRate(
+         properties["frameRate"] as Any)
+     publisherProperties.cameraResolution = Utils.sanitizeCameraResolution(
+         properties["resolution"] as? String ?? "MEDIUM")
+     publisherProperties.enableOpusDtx = Utils.sanitizeBooleanProperty(
+         properties["enableDtx"] as Any)
+     publisherProperties.name = properties["name"] as? String
+     publisherProperties.publisherAudioFallbackEnabled =
+         Utils.sanitizeBooleanProperty(
+             properties["publisherAudioFallback"] as Any)
+     publisherProperties.subscriberAudioFallbackEnabled =
+         Utils.sanitizeBooleanProperty(
+             properties["subscriberAudioFallback"] as Any)
+     publisherProperties.videoCapture?.videoContentHint =
+         Utils.convertVideoContentHint(properties["videoContentHint"] as Any)
+
+     publisherDelegateHandler = PublisherDelegateHandler(impl: self)
+
+     OTRN.sharedState.publishers.updateValue(
+         OTPublisher(
+             delegate: publisherDelegateHandler,
+             settings: publisherProperties)!, forKey: publisherId)
+     guard let publisher = OTRN.sharedState.publishers[publisherId] else {
+         strictUIViewContainer?.handleError([
+             "code": "OTPublisherError",
+             "message":
+                 "There was an error creating the native publisher instance",
+         ])
+         return
+     }
+
+     if let videoSource = properties["videoSource"] as? String,
+         videoSource == "screen"
+     {
+         guard let screenView = RCTPresentedViewController()?.view else {
+             strictUIViewContainer?.handleError([
+                 "code": "OTPublisherError",
+                 "message":
+                     "There was an error setting the videoSource as screen",
+             ])
+             if let scalableScreenshare = properties["scalableScreenshare"]
+                 as? Bool
+             {
+                 publisherProperties.scalableScreenshare =
+                     scalableScreenshare
+             }
+             return
+         }
+         publisher.videoType = .screen
+         publisher.videoCapture = OTScreenCapture(view: screenView)
+     } else if let cameraPosition = properties["cameraPosition"] as? String {
+         publisher.cameraPosition =
+             cameraPosition == "front" ? .front : .back
+     }
+
+     publisher.audioFallbackEnabled = Utils.sanitizeBooleanProperty(
+         properties["audioFallbackEnabled"] as Any)
+     publisher.publishAudio = Utils.sanitizeBooleanProperty(
+         properties["publishAudio"] as Any)
+     publisher.publishVideo = Utils.sanitizeBooleanProperty(
+         properties["publishVideo"] as Any)
+     publisher.publishCaptions = Utils.sanitizeBooleanProperty(
+         properties["publishCaptions"] as Any)
+
+     // TODO: Set up delegates
+     // publisher?.audioLevelDelegate = self
+     // publisher?.networkStatsDelegate = self
+     // publisher?.rtcStatsReportDelegate = self
+
+     if let pubView = publisher.view {
+         pubView.frame = strictUIViewContainer?.bounds ?? .zero
+         publisherUIView = pubView
+     }
+ }
+ */
+
+/*
+ @objc public func publish(_ sessionId: String, publisherId: String) {
+     var error: OTError?
+
+     guard let publisher = OTRN.sharedState.publishers[publisherId] else {
+         strictUIViewContainer?.handleError([
+             "code": "OTPublisherError",
+             "message":
+                 "Error publishing. Could not find native publisher instance",
+         ])
+         return
+     }
+
+     guard let session = OTRN.sharedState.sessions[sessionId] else {
+         strictUIViewContainer?.handleError([
+             "code": "OTPublisherError",
+             "message":
+                 "Error connecting to session. Could not find native session instance",
+         ])
+         return
+     }
+
+     session.publish(publisher, error: &error)
+
+     if let err = error {
+         strictUIViewContainer?.handleError([
+             "code": "OTPublisherError",
+             "message": err.localizedDescription,
+         ])
+     }
+ }
+
+ */

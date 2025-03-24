@@ -134,7 +134,7 @@ export interface Spec extends TurboModule {
   connect(sessionId: string, token: string): Promise<void>;
   disconnect(sessionId: string): Promise<void>;
   getSubscriberRtcStatsReport(): void;
-  publish(publisherId: string): void;
+  publish(publisherId: string): Promise<void>;
   sendSignal(sessionId: string, type: string, data: string): void;
   setEncryptionSecret(sessionId: string, secret: string): Promise<void>;
   reportIssue(sessionId: string): Promise<string>;
