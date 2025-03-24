@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, useMemo } from 'react';
 import { View } from 'react-native';
 import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import PropTypes from 'prop-types';
 import { OT } from './OT';
 import { dispatchEvent, setIsConnected } from './helpers/OTSessionHelper';
+import OTContext from './contexts/OTContext';
 
 export default class OTSession extends Component {
   eventHandlers = {};
@@ -16,6 +17,7 @@ export default class OTSession extends Component {
 
   async initSession(apiKey, sessionId, token) {
     OT.onSessionConnected((event) => {
+      this.connectionId = event.connectionId;
       this.eventHandlers.sessionConnected(event);
       setIsConnected(true);
       this.dispatchLocalEvent('sessionConnected', event);
@@ -26,7 +28,6 @@ export default class OTSession extends Component {
     OT.initSession(apiKey, sessionId, {});
     OT.onStreamCreated((event) => {
       this.dispatchLocalEvent('streamCreated', event);
-      console.log(77234234234);
       dispatchEvent('streamCreated', event);
     });
 
@@ -63,8 +64,15 @@ export default class OTSession extends Component {
 
   render() {
     const { style, children, sessionId, apiKey, token } = this.props;
+
     if (children && sessionId && apiKey && token) {
-      return <View style={style}>{children}</View>;
+      return (
+        <OTContext.Provider
+          value={{ sessionId, connectionId: this.connectionId }}
+        >
+          <View style={style}>{children}</View>
+        </OTContext.Provider>
+      );
     }
     return <View />;
   }

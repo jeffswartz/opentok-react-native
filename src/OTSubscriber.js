@@ -16,9 +16,12 @@ import {
   getOtrnErrorEventHandler,
   sanitizeBooleanProperty,
 } from './helpers/OTHelper';
-// import OTContext from './contexts/OTContext';
+import OTContext from './contexts/OTContext';
 
 export default class OTSubscriber extends Component {
+  sessionId = this.context.sessionId;
+  sessionInfo = this.context.sessionInfo;
+
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -56,9 +59,12 @@ export default class OTSubscriber extends Component {
 
   initComponent = () => {
     const { eventHandlers } = this.props;
-    const { sessionId } = this.props;
     // const { sessionId } = this.context;
     addEventListener('streamCreated', this.streamCreatedHandler);
+    addEventListener(
+      'publisherStreamCreated',
+      this.publisherStreamCreatedHandler
+    );
     addEventListener('streamDestroyed', this.streamDestroyedHandler);
     addEventListener('subscriberConnected', this.subscriberConnectedHandler);
     /*
@@ -145,18 +151,22 @@ export default class OTSubscriber extends Component {
     removeNativeEvents(events);
     */
   }
+  publisherStreamCreatedHandler = (stream) => {
+    return;
+    if (this.props.subscribeToSelf) {
+      this.streamCreatedHandler(stream);
+    }
+  };
   streamCreatedHandler = (stream) => {
-    console.log(234234234);
-    const { subscribeToSelf } = this.state;
-    const { streamProperties, properties } = this.props;
-    const { sessionId, sessionInfo } = this.context;
+    const { subscribeToSelf, streamProperties, properties } = this.props;
+    // const { sessionId } = this.context;
     const subscriberProperties = streamProperties[stream.streamId]
       ? sanitizeProperties(streamProperties[stream.streamId])
       : sanitizeProperties(properties);
     // Subscribe to streams. If subscribeToSelf is true, subscribe also to his own stream
     const sessionInfoConnectionId =
-      sessionInfo && sessionInfo.connection
-        ? sessionInfo.connection.connectionId
+      this.sessionInfo && this.sessionInfo.connection
+        ? this.sessionInfo.connection.connectionId
         : null;
     if (subscribeToSelf || sessionInfoConnectionId !== stream.connectionId) {
       this.setState({
@@ -226,19 +236,17 @@ export default class OTSubscriber extends Component {
             : streamProperties.style;
         */
         const style = styles.videoview;
-        console.log(2342333334234, this.props.sessionId, streamId);
         return (
           <OTSubscriberView
             key={streamId}
             streamId={streamId}
-            sessionId={this.props.sessionId}
+            sessionId={this.sessionId}
             style={style}
           />
         );
       });
       return <View style={containerStyle}>{childrenWithStreams}</View>;
     }
-    console.log(444, this.props.sessionId, this.props.children);
     return this.props.children(this.state.streams) || null;
   }
 }
@@ -260,7 +268,6 @@ OTSubscriber.propTypes = {
   containerStyle: PropTypes.object,
   // getRtcStatsReport: PropTypes.object,
   subscribeToSelf: PropTypes.bool,
-  sessionId: PropTypes.string, // TODO: use context
 };
 
 OTSubscriber.defaultProps = {
@@ -273,4 +280,4 @@ OTSubscriber.defaultProps = {
   // subscribeToCaptions: false,
 };
 
-// OTSubscriber.contextType = OTContext;
+OTSubscriber.contextType = OTContext;

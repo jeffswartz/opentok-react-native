@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import uuid from 'react-native-uuid';
 import { checkAndroidPermissions, OT } from './OT';
 import OTPublisherViewNative from './OTPublisherViewNativeComponent';
-import { addEventListener, isConnected } from './helpers/OTSessionHelper';
+import { addEventListener, dispatchEvent, isConnected } from './helpers/OTSessionHelper';
 import { sanitizeProperties } from './helpers/OTPublisherHelper';
+import OTContext from './contexts/OTContext';
 
 export default class OTPublisher extends React.Component {
   eventHandlers = {};
@@ -71,49 +72,50 @@ export default class OTPublisher extends React.Component {
     OT.getPublisherRtcStatsReport();
   }
 
-  dispatchEvent(type, event) {
+  dispatchLocalEvent(type, event) {
     if (this.props.eventHandlers && this.props.eventHandlers[type]) {
-      this.props.eventHandlers[type](event);
+      this.props.eventHandlers[type](event.nativeEvent);
     }
   }
 
   render() {
     return (
       <OTPublisherViewNative
-        sessionId={this.props.sessionId}
+        sessionId={this.context.sessionId}
         publisherId={this.state.publisherId}
         onError={(event) => {
-          this.dispatchEvent('error', event);
+          this.dispatchLocalEvent('error', event);
         }}
         onStreamCreated={(event) => {
-          this.dispatchEvent('streamCreated', event);
+          dispatchEvent('publisherStreamCreated', event.nativeEvent);
+          this.dispatchLocalEvent('streamCreated', event);
         }}
         onStreamDestroyed={(event) => {
-          this.dispatchEvent('streamDestroyed', event);
+          this.dispatchLocalEvent('streamDestroyed', event);
         }}
         onAudioLevel={(event) => {
-          this.dispatchEvent('audioLevel', event);
+          this.dispatchLocalEvent('audioLevel', event);
         }}
         onAudioNetworkStats={(event) => {
-          this.dispatchEvent('audioNetworkStats', event);
+          this.dispatchLocalEvent('audioNetworkStats', event);
         }}
         onRtcStatsReport={(event) => {
-          this.dispatchEvent('rtcStatsReport', event);
+          this.dispatchLocalEvent('rtcStatsReport', event);
         }}
         onVideoDisabled={(event) => {
-          this.dispatchEvent('videoDisabled', event);
+          this.dispatchLocalEvent('videoDisabled', event);
         }}
         onVideoDisableWarning={(event) => {
-          this.dispatchEvent('videoDisableWarning', event);
+          this.dispatchLocalEvent('videoDisableWarning', event);
         }}
         onVideoDisableWarningLifted={(event) => {
-          this.dispatchEvent('videoDisableWarningLifted', event);
+          this.dispatchLocalEvent('videoDisableWarningLifted', event);
         }}
         onVideoEnabled={(event) => {
-          this.dispatchEvent('videoEnabled', event);
+          this.dispatchLocalEvent('videoEnabled', event);
         }}
         onVideoNetworkStats={(event) => {
-          this.dispatchEvent('videoNetworkStats', event);
+          this.dispatchLocalEvent('videoNetworkStats', event);
         }}
         style={this.props.style}
         {...this.props.properties}
@@ -123,7 +125,6 @@ export default class OTPublisher extends React.Component {
 }
 
 OTPublisher.propTypes = {
-  sessionId: PropTypes.string.isRequired,
   eventHandlers: PropTypes.object,
   properties: PropTypes.object,
   style: ViewPropTypes.style,
@@ -155,3 +156,5 @@ OTPublisher.defaultProps = {
     flex: 1,
   },
 };
+
+OTPublisher.contextType = OTContext;
