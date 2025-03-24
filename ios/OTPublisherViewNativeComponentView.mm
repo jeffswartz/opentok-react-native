@@ -50,7 +50,6 @@ using namespace facebook::react;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    NSLog(@"INIT");
     if (self = [super initWithFrame:frame]) {
         _impl = [[OTPublisherViewNativeImpl alloc] initWithView:self];
          self.contentView = nil;

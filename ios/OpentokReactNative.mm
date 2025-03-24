@@ -114,8 +114,10 @@ RCT_EXPORT_MODULE()
     [impl disableForceMute:sessionId resolve:resolve reject:reject];
 }
 
-- (void)publish:(nonnull NSString *)publisherId { 
-    
+- (void)publish:(nonnull NSString *)publisherId
+        resolve:(nonnull RCTPromiseResolveBlock)resolve
+         reject:(nonnull RCTPromiseRejectBlock)reject {
+    [impl publish:publisherId resolve:resolve reject:reject];
 }
 
 
