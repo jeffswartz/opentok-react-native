@@ -82,10 +82,6 @@ import React
             ])
             return
         }
-        // TODO: Set up delegates
-        // publisher?.audioLevelDelegate = self
-        // publisher?.networkStatsDelegate = self
-        // publisher?.rtcStatsReportDelegate = self
 
         publisher.audioLevelDelegate = publisherAudioLevelDelegateHandler
         publisher.networkStatsDelegate = publisherNetworkStatsDelegateHandler

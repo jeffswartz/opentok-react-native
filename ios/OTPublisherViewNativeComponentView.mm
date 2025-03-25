@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-#import <OpentokReactNative-Swift.h>
+#import <UIKit/UIKit.h>
 #import <OpentokReactNative/ComponentDescriptors.h>
 #import <OpentokReactNative/EventEmitters.h>
 #import <OpentokReactNative/Props.h>
@@ -7,7 +7,7 @@
 #import <OpentokReactNative/RNOpentokReactNativeSpec.h>
 #import <React/RCTConversions.h>
 #import <React/RCTViewComponentView.h>
-#import <UIKit/UIKit.h>
+#import <OpentokReactNative-Swift.h>
 
 using namespace facebook::react;
 
