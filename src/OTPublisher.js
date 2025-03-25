@@ -76,51 +76,45 @@ export default class OTPublisher extends React.Component {
     OT.getPublisherRtcStatsReport();
   }
 
-  dispatchLocalEvent(type, event) {
-    if (this.props.eventHandlers && this.props.eventHandlers[type]) {
-      this.props.eventHandlers[type](event.nativeEvent);
-    }
-  }
-
   render() {
     return (
       <OTPublisherViewNative
         sessionId={this.context.sessionId}
         publisherId={this.state.publisherId}
         onError={(event) => {
-          this.dispatchLocalEvent('error', event);
+          this.props.eventHandlers?.error?.(event.nativeEvent);
         }}
         onStreamCreated={(event) => {
           dispatchEvent('publisherStreamCreated', event.nativeEvent);
-          this.dispatchLocalEvent('streamCreated', event);
+          this.props.eventHandlers?.streamCreated?.(event.nativeEvent);
         }}
         onStreamDestroyed={(event) => {
           dispatchEvent('publisherStreamDestroyed', event);
-          this.dispatchLocalEvent('streamDestroyed', event);
+          this.props.eventHandlers?.streamDestroyed?.(event.nativeEvent);
         }}
         onAudioLevel={(event) => {
-          this.dispatchLocalEvent('audioLevel', event);
+          this.props.eventHandlers?.audioLevel?.(event.nativeEvent);
         }}
         onAudioNetworkStats={(event) => {
-          this.dispatchLocalEvent('audioNetworkStats', event);
+          this.props.eventHandlers?.audioNetworkStats?.(event.nativeEvent);
         }}
         onRtcStatsReport={(event) => {
-          this.dispatchLocalEvent('rtcStatsReport', event);
+          this.props.eventHandlers?.rtcStatsReport?.(event.nativeEvent);
         }}
         onVideoDisabled={(event) => {
-          this.dispatchLocalEvent('videoDisabled', event);
+          this.props.eventHandlers?.videoDisabled?.(event.nativeEvent);
         }}
         onVideoDisableWarning={(event) => {
-          this.dispatchLocalEvent('videoDisableWarning', event);
+          this.props.eventHandlers?.videoDisableWarning?.(event.nativeEvent);
         }}
         onVideoDisableWarningLifted={(event) => {
-          this.dispatchLocalEvent('videoDisableWarningLifted', event);
+          this.props.eventHandlers?.videoDisableWarningLifted?.(event.nativeEvent);
         }}
         onVideoEnabled={(event) => {
-          this.dispatchLocalEvent('videoEnabled', event);
+          this.props.eventHandlers?.videoEnabled?.(event.nativeEvent);
         }}
         onVideoNetworkStats={(event) => {
-          this.dispatchLocalEvent('videoNetworkStats', event);
+          this.props.eventHandlers?.videoNetworkStats?.(event.nativeEvent);
         }}
         style={this.props.style}
         {...this.props.properties}
