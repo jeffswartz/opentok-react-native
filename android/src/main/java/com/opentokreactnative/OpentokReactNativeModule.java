@@ -64,8 +64,14 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
 
     sharedState.getSessions().put(sessionId, session);
 
+    session.setArchiveListener(this);
+    session.setConnectionListener(this);
+    session.setMuteListener(this);
+    session.setMuteListener(this);
     session.setSessionListener(this);
     session.setSignalListener(this);
+    session.setStreamCaptionsPropertiesListener(this);
+    session.setStreamPropertiesListener(this);
   }
 
   @Override
@@ -204,26 +210,26 @@ public class OpentokReactNativeModule extends NativeOpentokReactNativeSpec imple
   @Override
   public void onConnectionCreated(Session session, Connection connection) {
     //sharedState.getConnections().put(connection.getConnectionId(), connection);
-    WritableMap archiveInfo = Arguments.createMap();
-    archiveInfo.putString("sessionId", session.getSessionId());
+    WritableMap eventData = Arguments.createMap();
+    eventData.putString("sessionId", session.getSessionId());
     WritableMap connectionInfo = Arguments.createMap();
     connectionInfo.putString("connectionId", connection.getConnectionId());
     connectionInfo.putString("data", connection.getData());
     connectionInfo.putString("creationTime", connection.getCreationTime().toString());
-    archiveInfo.putMap("connection", connectionInfo);
-    emitOnConnectionCreated(archiveInfo);
+    eventData.putMap("connection", connectionInfo);
+    emitOnConnectionCreated(eventData);
   }
 
   @Override
   public void onConnectionDestroyed(Session session, Connection connection) {
-    WritableMap archiveInfo = Arguments.createMap();
-    archiveInfo.putString("sessionId", session.getSessionId());
+    WritableMap eventData = Arguments.createMap();
+    eventData.putString("sessionId", session.getSessionId());
     WritableMap connectionInfo = Arguments.createMap();
     connectionInfo.putString("connectionId", connection.getConnectionId());
     connectionInfo.putString("data", connection.getData());
     connectionInfo.putString("creationTime", connection.getCreationTime().toString());
-    archiveInfo.putMap("connection", connectionInfo);
-    emitOnConnectionDestroyed(archiveInfo);
+    eventData.putMap("connection", connectionInfo);
+    emitOnConnectionDestroyed(eventData);
   }
 
   @Override

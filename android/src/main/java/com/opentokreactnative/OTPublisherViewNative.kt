@@ -146,7 +146,14 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
         BaseVideoRenderer.STYLE_VIDEO_FILL
     )
     publisher?.setPublisherListener(this)
-    // publisher?.setRtcStatsReportListener(this)
+    /*
+    publisher?.setAudioLevelListener(this)
+    publisher?.setAudioStatsListener(this)
+    publisher?.setMuteListener(this)
+    publisher?.setRtcStatsReportListener(this)
+    publisher?.setVideoListener(this)
+    publisher?.setVideoStatsListener(this)
+    */
     publisher?.setPublishAudio(publishAudio)
     publisher?.setPublishVideo(publishVideo)
 

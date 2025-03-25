@@ -95,6 +95,13 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
     )
     subscriber?.setSubscriberListener(this)
     subscriber?.setRtcStatsReportListener(this)
+    /*
+    subscriber?.setCaptionsListener(this)
+    subscriber?.setAudioStatsListener(this)
+    subscriber?.setVideoStatsListener(this)
+    subscriber?.setVideoListener(this)
+    subscriber?.setStreamListener(this)
+    */
     subscriber?.setSubscribeToAudio(subscribeToAudio)
     subscriber?.setSubscribeToVideo(subscribeToVideo)
     // FrameLayout mubscriberViewContainer = FrameLayout(context);
