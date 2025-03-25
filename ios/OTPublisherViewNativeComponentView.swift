@@ -5,10 +5,12 @@ import React
 @objc public class OTPublisherViewNativeImpl: NSObject {
     private var currentSession: OTSession?
     private var sessionId: String?
-    private var publisherId: String?
+    fileprivate var publisherId: String?
     fileprivate weak var strictUIViewContainer:
         OTPublisherViewNativeComponentView?
     fileprivate var publisherDelegateHandler: PublisherDelegateHandler?
+    fileprivate var publisherAudioLevelDelegateHandler: PublisherAudioLevelDelegateHandler?
+    fileprivate var publisherNetworkStatsDelegateHandler: PublisherNetworkStatsDelegateHandler?
     fileprivate var publisherUIView: UIView?
 
     @objc public var publisherView: UIView {
@@ -55,6 +57,8 @@ import React
             properties["scalableScreenshare"] as Any)
 
         publisherDelegateHandler = PublisherDelegateHandler(impl: self)
+        publisherAudioLevelDelegateHandler = PublisherAudioLevelDelegateHandler(impl: self)
+        publisherNetworkStatsDelegateHandler = PublisherNetworkStatsDelegateHandler(impl: self)
 
         self.publisherId = Utils.sanitizeStringProperty(
             properties["publisherId"] as Any)
@@ -78,7 +82,13 @@ import React
             ])
             return
         }
+        // TODO: Set up delegates
+        // publisher?.audioLevelDelegate = self
+        // publisher?.networkStatsDelegate = self
+        // publisher?.rtcStatsReportDelegate = self
 
+        publisher.audioLevelDelegate = publisherAudioLevelDelegateHandler
+        publisher.networkStatsDelegate = publisherNetworkStatsDelegateHandler
         OTRN.sharedState.publishers.updateValue(publisher, forKey: publisherId)
 
         if let videoSource = properties["videoSource"] as? String,
@@ -108,10 +118,7 @@ import React
         publisher.publishCaptions = Utils.sanitizeBooleanProperty(
             properties["publishCaptions"] as Any)
 
-        // TODO: Set up delegates
-        // publisher?.audioLevelDelegate = self
-        // publisher?.networkStatsDelegate = self
-        // publisher?.rtcStatsReportDelegate = self
+
 
         if let pubView = publisher.view {
             pubView.frame = strictUIViewContainer?.bounds ?? .zero
@@ -206,6 +213,10 @@ import React
                 publisher.view?.removeFromSuperview()
                 publisher.delegate = nil
                 publisherDelegateHandler = nil
+                publisher.audioLevelDelegate = nil
+                publisherAudioLevelDelegateHandler = nil
+                publisher.networkStatsDelegate = nil
+                publisherNetworkStatsDelegateHandler = nil
                 OTRN.sharedState.publishers[publisherId] = nil
                 OTRN.sharedState.isPublishing[publisherId] = nil
             }
@@ -244,5 +255,73 @@ private class PublisherDelegateHandler: NSObject, OTPublisherKitDelegate {
         impl?.strictUIViewContainer?.handleStreamDestroyed([
             "streamId": stream.streamId
         ])
+    }
+}
+
+private class PublisherAudioLevelDelegateHandler: NSObject, OTPublisherKitAudioLevelDelegate {
+    weak var impl: OTPublisherViewNativeImpl?
+    
+    init(impl: OTPublisherViewNativeImpl) {
+        self.impl = impl
+        super.init()
+    }
+    
+    public func publisher(_ publisher: OTPublisherKit, audioLevelUpdated audioLevel: Float) {
+        guard let publisherId = impl?.publisherId,
+              publisherId.count > 0 else {
+            return
+        }
+        
+        impl?.strictUIViewContainer?.handleAudioLevel([
+            "audioLevel": audioLevel
+        ])
+    }
+}
+
+private class PublisherNetworkStatsDelegateHandler: NSObject, OTPublisherKitNetworkStatsDelegate {
+    weak var impl: OTPublisherViewNativeImpl?
+    
+    init(impl: OTPublisherViewNativeImpl) {
+        self.impl = impl
+        super.init()
+    }
+    
+    
+    public func publisher(_ publisher: OTPublisherKit, audioNetworkStatsUpdated stats: [OTPublisherKitAudioNetworkStats]) {
+        let statsArray = stats.map { stat -> [String: Any] in
+            return [
+                "connectionId": stat.connectionId,
+                "subscriberId": stat.subscriberId,
+                "audioPacketsLost": stat.audioPacketsLost,
+                "audioBytesSent": stat.audioBytesSent,
+                "audioPacketsSent": stat.audioPacketsSent,
+                "timeStamp": stat.timestamp
+            ]
+        }
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: statsArray),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            impl?.strictUIViewContainer?.handleAudioNetworkStats(jsonString)
+        }
+    }
+    
+
+    
+    public func publisher(_ publisher: OTPublisherKit, videoNetworkStatsUpdated stats: [OTPublisherKitVideoNetworkStats]) {
+        let statsArray = stats.map { stat -> [String: Any] in
+            return [
+                "connectionId": stat.connectionId,
+                "subscriberId": stat.subscriberId,
+                "videoPacketsLost": stat.videoPacketsLost,
+                "videoBytesSent": stat.videoBytesSent,
+                "videoPacketsSent": stat.videoPacketsSent,
+                "timestamp": stat.timestamp
+            ]
+        }
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: statsArray),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            impl?.strictUIViewContainer?.handleVideoNetworkStats(jsonString)
+        }
     }
 }

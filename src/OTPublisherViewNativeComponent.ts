@@ -13,36 +13,23 @@ export type ErrorEvent = {
 
 export type EmptyEvent = {};
 
-export type PublisherVideoNetworkStats = {
-  connectionId?: string;
-  subscriberId?: string;
-  videoPacketsLost: Int32;
-  videoBytesSent: Int32;
-  videoPacketsSent: Int32;
-  timestamp: Double;
-};
-
-export type PublisherVideoNetworkStatsEvent = PublisherVideoNetworkStats[];
-
 export type AudioLevelEvent = {
   audioLevel: Float;
 };
 
-export type AudioNetworkStatsEvent = {
-  connectionId?: string;
-  subscriberId?: string;
-  audioPacketsLost: Double;
-  audioBytesSent: Double;
-  audioPacketsSent: Double;
-  timeStamp: Double;
-};
 
 export type PublisherRTCStatsReport = {
   connectionId: string;
   jsonArrayOfReports: string;
 };
 
-export type PublisherRTCStatsReportEvent = PublisherRTCStatsReport[];
+export type AudioNetworkStatsEvent = {
+  jsonStats: string;  // JSON string containing all audio stats
+};
+
+export type VideoNetworkStatsEvent = {
+  jsonStats: string;  // JSON string containing all video stats
+};
 
 export interface NativeProps extends ViewProps {
   sessionId: string;
@@ -75,7 +62,7 @@ export interface NativeProps extends ViewProps {
   onVideoDisableWarning?: BubblingEventHandler<EmptyEvent> | null;
   onVideoDisableWarningLifted?: BubblingEventHandler<EmptyEvent> | null;
   onVideoEnabled?: BubblingEventHandler<EmptyEvent> | null;
-  onVideoNetworkStats?: BubblingEventHandler<PublisherVideoNetworkStats> | null;
+  onVideoNetworkStats?: BubblingEventHandler<VideoNetworkStatsEvent> | null;
 }
 
 export default codegenNativeComponent<NativeProps>(

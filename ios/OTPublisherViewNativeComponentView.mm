@@ -9,7 +9,10 @@
 #import <OpentokReactNative/RNOpentokReactNativeSpec.h>
 #import <OpentokReactNative-Swift.h>
 
+
 using namespace facebook::react;
+
+
 
 @interface OTPublisherViewNativeComponentView
     : RCTViewComponentView <RCTOTPublisherViewNativeViewProtocol>
@@ -126,6 +129,37 @@ using namespace facebook::react;
         OTPublisherViewNativeEventEmitter::OnStreamDestroyed payload{
             .streamId = std::string([eventData[@"streamId"] UTF8String])};
         eventEmitter->onStreamDestroyed(std::move(payload));
+    }
+}
+
+- (void)handleAudioLevel:(NSDictionary *)eventData {
+    if (_eventEmitter) {
+        auto eventEmitter =
+            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
+                _eventEmitter);
+        OTPublisherViewNativeEventEmitter::OnAudioLevel payload{
+            .audioLevel = [eventData[@"audioLevel"] floatValue]};
+        eventEmitter->onAudioLevel(std::move(payload));
+    }
+}
+
+- (void)handleAudioNetworkStats:(NSString *)jsonString {
+    if (_eventEmitter) {
+        auto eventEmitter = std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
+        OTPublisherViewNativeEventEmitter::OnAudioNetworkStats payload{
+            .jsonStats = std::string([jsonString UTF8String])
+        };
+        eventEmitter->onAudioNetworkStats(std::move(payload));
+    }
+}
+
+- (void)handleVideoNetworkStats:(NSString *)jsonString {
+    if (_eventEmitter) {
+        auto eventEmitter = std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
+        OTPublisherViewNativeEventEmitter::OnVideoNetworkStats payload{
+            .jsonStats = std::string([jsonString UTF8String])
+        };
+        eventEmitter->onVideoNetworkStats(std::move(payload));
     }
 }
 @end
