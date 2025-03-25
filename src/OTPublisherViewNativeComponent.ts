@@ -69,6 +69,7 @@ export interface NativeProps extends ViewProps {
   onAudioNetworkStats?: BubblingEventHandler<AudioNetworkStatsEvent> | null;
   onMuteForced?: BubblingEventHandler<EmptyEvent> | null;
   onRtcStatsReport?: BubblingEventHandler<PublisherRTCStatsReport> | null;
+  onVideoDisabled?: BubblingEventHandler<EmptyEvent> | null;
   onVideoDisableWarning?: BubblingEventHandler<EmptyEvent> | null;
   onVideoDisableWarningLifted?: BubblingEventHandler<EmptyEvent> | null;
   onVideoEnabled?: BubblingEventHandler<EmptyEvent> | null;
