@@ -10,6 +10,8 @@ import React
 
     @objc public init(ot: OpentokReactNative) {
         self.ot = ot
+        super.init()
+        OTRN.sharedState.opentokModule = ot
     }
 
     @objc public func initSession(
@@ -313,13 +315,8 @@ private class SessionDelegateHandler: NSObject, OTSessionDelegate {
     }
 
     public func sessionDidConnect(_ session: OTSession) {
-
-
-        let eventDict: [AnyHashable: Any] = [
-            "sessionId": session.sessionId,
-            "connectionId": session.connection?.connectionId ?? "",
-        ]
-        impl?.ot?.emit(onSessionConnected: eventDict)
+        let sessionInfo = EventUtils.prepareJSSessionEventData(session);
+        impl?.ot?.emit(onSessionConnected: sessionInfo)
     }
 
     public func session(_ session: OTSession, didFailWithError error: OTError) {
@@ -328,12 +325,10 @@ private class SessionDelegateHandler: NSObject, OTSessionDelegate {
     }
 
     public func session(_ session: OTSession, streamCreated stream: OTStream) {
-        OTRN.sharedState.subscriberStreams.updateValue(
-            stream, forKey: stream.streamId)
-        let streamInfo: [String: Any] = EventUtils.prepareJSStreamEventData(
-            stream)
+        OTRN.sharedState.subscriberStreams.updateValue(stream, forKey: stream.streamId)
+        let streamInfo: [String: Any] = EventUtils.prepareJSStreamEventData(stream)
         impl?.ot?.emit(onStreamCreated: streamInfo)
-        setStreamObservers(stream: stream, isPublisherStream: false)
+        Utils.setStreamObservers(stream: stream, isPublisherStream: false)
     }
 
     public func session(_ session: OTSession, streamDestroyed stream: OTStream)
@@ -345,121 +340,15 @@ private class SessionDelegateHandler: NSObject, OTSessionDelegate {
     }
 
     public func sessionDidDisconnect(_ session: OTSession) {
-        // Emit event
-        let eventDict: [String: Any] = [
-            "sessionId": session.sessionId,
-            "connectionId": session.connection?.connectionId ?? "",
-        ]
-        impl?.ot?.emit(onSessionDisconnected: eventDict)
+        let sessionInfo = EventUtils.prepareJSSessionEventData(session);
+        impl?.ot?.emit(onSessionDisconnected: sessionInfo)
 
         // Cleanup session state
         session.delegate = nil
         OTRN.sharedState.sessions.removeValue(forKey: session.sessionId)
-        OTRN.sharedState.sessionConnectCallbacks.removeValue(
-            forKey: session.sessionId)
     }
-    func setStreamObservers(stream: OTStream, isPublisherStream: Bool) {
-        let streamId = stream.streamId
 
-        // Video dimensions observer
-        let dimensionsObserver = stream.observe(
-            \.videoDimensions, options: [.old, .new]
-        ) { stream, change in
-            guard let oldDimensions = change.oldValue,
-                let newDimensions = change.newValue,
-                oldDimensions != newDimensions
-            else { return }
 
-            let oldValue = [
-                "width": oldDimensions.width,
-                "height": oldDimensions.height,
-            ]
-            let newValue = [
-                "width": newDimensions.width,
-                "height": newDimensions.height,
-            ]
-
-            self.checkAndEmitStreamPropertyChangeEvent(
-                streamId,
-                changedProperty: "videoDimensions",
-                oldValue: oldValue,
-                newValue: newValue,
-                isPublisherStream: isPublisherStream)
-        }
-
-        // Audio observer
-        let audioObserver = stream.observe(\.hasAudio, options: [.old, .new]) {
-            stream, change in
-            guard let oldValue = change.oldValue,
-                let newValue = change.newValue,
-                oldValue != newValue
-            else { return }
-
-            self.checkAndEmitStreamPropertyChangeEvent(
-                streamId,
-                changedProperty: "hasAudio",
-                oldValue: oldValue,
-                newValue: newValue,
-                isPublisherStream: isPublisherStream)
-        }
-
-        // Video observer
-        let videoObserver = stream.observe(\.hasVideo, options: [.old, .new]) {
-            stream, change in
-            guard let oldValue = change.oldValue,
-                let newValue = change.newValue,
-                oldValue != newValue
-            else { return }
-
-            self.checkAndEmitStreamPropertyChangeEvent(
-                streamId,
-                changedProperty: "hasVideo",
-                oldValue: oldValue,
-                newValue: newValue,
-                isPublisherStream: isPublisherStream)
-        }
-
-        // Captions observer
-        let captionsObserver = stream.observe(
-            \.hasCaptions, options: [.old, .new]
-        ) { stream, change in
-            guard let oldValue = change.oldValue,
-                let newValue = change.newValue,
-                oldValue != newValue
-            else { return }
-
-            self.checkAndEmitStreamPropertyChangeEvent(
-                streamId,
-                changedProperty: "hasCaptions",
-                oldValue: oldValue,
-                newValue: newValue,
-                isPublisherStream: isPublisherStream)
-        }
-
-        // Store all observers
-        OTRN.sharedState.streamObservers.updateValue(
-            [
-                dimensionsObserver, audioObserver, videoObserver,
-                captionsObserver,
-            ], forKey: streamId)
-    }
-    func checkAndEmitStreamPropertyChangeEvent(
-        _ streamId: String, changedProperty: String, oldValue: Any,
-        newValue: Any, isPublisherStream: Bool
-    ) {
-        guard
-            let stream = isPublisherStream
-                ? OTRN.sharedState.publisherStreams[streamId]
-                : OTRN.sharedState.subscriberStreams[streamId]
-        else { return }
-        let streamInfo: [String: Any] = EventUtils.prepareJSStreamEventData(
-            stream)
-        let eventData: [String: Any] =
-            EventUtils.prepareStreamPropertyChangedEventData(
-                changedProperty, oldValue: oldValue, newValue: newValue,
-                stream: streamInfo)
-        impl?.ot?.emit(onStreamPropertyChanged: eventData)
-    }
     public func session(
         _ session: OTSession, connectionCreated connection: OTConnection
     ) {
@@ -478,6 +367,14 @@ private class SessionDelegateHandler: NSObject, OTSessionDelegate {
         var connectionInfo = EventUtils.prepareJSConnectionEventData(connection)
         connectionInfo["sessionId"] = session.sessionId
         impl?.ot?.emit(onConnectionDestroyed: connectionInfo)
+    }
+    public func session(_ session: OTSession, receivedSignalType type: String?, from connection: OTConnection?, with string: String?) {
+        var signalData: Dictionary<String, Any> = [:];
+        signalData["type"] = type;
+        signalData["data"] = string;
+        signalData["connectionId"] = connection?.connectionId;
+        signalData["sessionId"] = session.sessionId;
+        impl?.ot?.emit(onSignalReceived:  signalData)
     }
     public func session(_ session: OTSession, info muteForced: OTMuteForcedInfo)
     {

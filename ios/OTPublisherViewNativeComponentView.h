@@ -6,4 +6,10 @@
 - (void)handleAudioLevel:(NSDictionary *)eventData;
 - (void)handleAudioNetworkStats:(NSString *)jsonString;
 - (void)handleVideoNetworkStats:(NSString *)jsonString;
+- (void)handleMuteForced;
+- (void)handleRtcStatsReport:(NSDictionary *)eventData;
+- (void)handleVideoDisableWarning;
+- (void)handleVideoDisableWarningLifted;
+- (void)handleVideoEnabled;
+- (void)handleVideoDisabled;
 @end

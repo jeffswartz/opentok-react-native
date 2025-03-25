@@ -95,11 +95,16 @@ using namespace facebook::react;
     [super updateProps:props oldProps:oldProps];
 }
 
+- (std::shared_ptr<const OTPublisherViewNativeEventEmitter>)getEventEmitter {
+    if (!_eventEmitter) {
+        return nullptr;
+    }
+    return std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
+}
+
 - (void)handleStreamCreated:(NSDictionary *)eventData {
-    if (_eventEmitter) {
-        auto eventEmitter =
-            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
-                _eventEmitter);
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
         OTPublisherViewNativeEventEmitter::OnStreamCreated payload{
             .streamId = std::string([eventData[@"streamId"] UTF8String])};
         eventEmitter->onStreamCreated(std::move(payload));
@@ -107,10 +112,8 @@ using namespace facebook::react;
 }
 
 - (void)handleError:(NSDictionary *)eventData {
-    if (_eventEmitter) {
-        auto eventEmitter =
-            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
-                _eventEmitter);
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
         OTPublisherViewNativeEventEmitter::OnError payload{
             .code = std::string([eventData[@"code"] UTF8String]),
             .message = std::string([eventData[@"message"] UTF8String])};
@@ -119,10 +122,8 @@ using namespace facebook::react;
 }
 
 - (void)handleStreamDestroyed:(NSDictionary *)eventData {
-    if (_eventEmitter) {
-        auto eventEmitter =
-            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
-                _eventEmitter);
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
         OTPublisherViewNativeEventEmitter::OnStreamDestroyed payload{
             .streamId = std::string([eventData[@"streamId"] UTF8String])};
         eventEmitter->onStreamDestroyed(std::move(payload));
@@ -130,10 +131,8 @@ using namespace facebook::react;
 }
 
 - (void)handleAudioLevel:(NSDictionary *)eventData {
-    if (_eventEmitter) {
-        auto eventEmitter =
-            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
-                _eventEmitter);
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
         OTPublisherViewNativeEventEmitter::OnAudioLevel payload{
             .audioLevel = [eventData[@"audioLevel"] floatValue]};
         eventEmitter->onAudioLevel(std::move(payload));
@@ -141,10 +140,8 @@ using namespace facebook::react;
 }
 
 - (void)handleAudioNetworkStats:(NSString *)jsonString {
-    if (_eventEmitter) {
-        auto eventEmitter =
-            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
-                _eventEmitter);
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
         OTPublisherViewNativeEventEmitter::OnAudioNetworkStats payload{
             .jsonStats = std::string([jsonString UTF8String])};
         eventEmitter->onAudioNetworkStats(std::move(payload));
@@ -152,14 +149,63 @@ using namespace facebook::react;
 }
 
 - (void)handleVideoNetworkStats:(NSString *)jsonString {
-    if (_eventEmitter) {
-        auto eventEmitter =
-            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
-                _eventEmitter);
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
         OTPublisherViewNativeEventEmitter::OnVideoNetworkStats payload{
             .jsonStats = std::string([jsonString UTF8String])};
         eventEmitter->onVideoNetworkStats(std::move(payload));
     }
+}
+
+- (void)handleMuteForced {
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
+        OTPublisherViewNativeEventEmitter::OnMuteForced payload{};
+        eventEmitter->onMuteForced(std::move(payload));
+    }
+}
+
+- (void)handleRtcStatsReport:(NSDictionary *)eventData {
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
+        OTPublisherViewNativeEventEmitter::OnRtcStatsReport payload{
+            .connectionId = std::string([eventData[@"connectionId"] UTF8String]),
+            .jsonArrayOfReports = std::string([eventData[@"jsonArrayOfReports"] UTF8String])
+        };
+        eventEmitter->onRtcStatsReport(std::move(payload));
+    }
+}
+
+- (void)handleVideoDisableWarning {
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
+        OTPublisherViewNativeEventEmitter::OnVideoDisableWarning payload{};
+        eventEmitter->onVideoDisableWarning(std::move(payload));
+    }
+}
+
+- (void)handleVideoDisableWarningLifted {
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
+        OTPublisherViewNativeEventEmitter::OnVideoDisableWarningLifted payload{};
+        eventEmitter->onVideoDisableWarningLifted(std::move(payload));
+    }
+}
+
+- (void)handleVideoEnabled {
+    auto eventEmitter = [self getEventEmitter];
+    if (eventEmitter) {
+        OTPublisherViewNativeEventEmitter::OnVideoEnabled payload{};
+        eventEmitter->onVideoEnabled(std::move(payload));
+    }
+}
+- (void)handleVideoDisabled {
+    //TODO not there in ts
+//    auto eventEmitter = [self getEventEmitter];
+//    if (eventEmitter) {
+//        OTPublisherViewNativeEventEmitter::OnVideoDisabled payload{};
+//        eventEmitter->onVideoDisabled(std::move(payload));
+//    }
 }
 @end
 
