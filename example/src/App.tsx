@@ -4,20 +4,20 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { OTSession, OTSubscriberView, OTPublisher } from 'opentok-react-native';
 
 function App(): React.JSX.Element {
-  const apiKey = '28415832';
-  const sessionId = '1_MX4yODQxNTgzMn5-MTc0MjQ0MjcwMjY1NH5sUUpSSFJ2ZUlaWE5YeEphUmZDQVNyRUZ-fn4';
-  const token = 'T1==cGFydG5lcl9pZD0yODQxNTgzMiZzaWc9N2FkMWEwM2M4ZWEwM2M3MDE0OTZkOWE3ZmY5MDBhMGI5OTNhYzdkZDpzZXNzaW9uX2lkPTFfTVg0eU9EUXhOVGd6TW41LU1UYzBNalEwTWpjd01qWTFOSDVzVVVwU1NGSjJaVWxhV0U1WWVFcGhVbVpEUVZOeVJVWi1mbjQmY3JlYXRlX3RpbWU9MTc0Mjg1MTYzMiZub25jZT0wLjIyMDI0NjExODk4NDk5MDI1JnJvbGU9bW9kZXJhdG9yJmV4cGlyZV90aW1lPTE3NDI4NTUyMzA4NTkmaW5pdGlhbF9sYXlvdXRfY2xhc3NfbGlzdD0=';
+  const apiKey = '';
+  const sessionId = '';
+  const token = '';
 
   const [streamIds, setStreamIds] = React.useState<string[]>([]);
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
   const [publishStream, setPublishStream] = React.useState<boolean>(false);
 
   const sessionRef = useRef<OTSession>(null);
-  //const subscriberRef = useRef<OTSubscriberViewNative>(null);
+  const subscriberRef = useRef<OTSubscriberViewNative>(null);
   const toggleVideo = () => {
     setSubscribeToVideo((val) => !val);
   };
-  const logAllEvents = true;
+  const logAllEvents = false;
 
   React.useEffect(() => {
     setInterval(() => {
@@ -52,6 +52,15 @@ function App(): React.JSX.Element {
             console.log('streamDestroyed', event),
           signal: (event: any) => console.log('signal event', event),
           error: (event: any) => console.log('error event', event),
+          connectionCreated: (event: any) =>
+            console.log('connectionCreated event', event),
+          archiveStarted: (event: any) =>
+            console.log('archiveStarted event', event),
+          archiveStopped: (event: any) =>
+            console.log('archiveStopped event', event),
+          muteForced: (event: any) => console.log('muteForced event', event),
+          streamPropertyChanged: (event: any) =>
+            console.log('streamPropertyChanged event', event),
         }}
         signal={{
           type: 'greeting2',
@@ -101,7 +110,7 @@ function App(): React.JSX.Element {
           />
         ) : null}
 
-        {/* <View key="subscriber" style={styles.subscriber}>
+        <View key="subscriber" style={styles.subscriber}>
           {streamIds?.map((streamId) => (
             <OTSubscriberView
               streamId={streamId}
@@ -124,7 +133,7 @@ function App(): React.JSX.Element {
               }}
             />
           ))}
-        </View> */}
+        </View>
       </OTSession>
       <Text style={styles.text}>
         Stream count: {streamIds.length.toString()}
