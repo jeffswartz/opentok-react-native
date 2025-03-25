@@ -1,18 +1,15 @@
-#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+#import <OpentokReactNative-Swift.h>
 #import <OpentokReactNative/ComponentDescriptors.h>
 #import <OpentokReactNative/EventEmitters.h>
 #import <OpentokReactNative/Props.h>
 #import <OpentokReactNative/RCTComponentViewHelpers.h>
+#import <OpentokReactNative/RNOpentokReactNativeSpec.h>
 #import <React/RCTConversions.h>
 #import <React/RCTViewComponentView.h>
-#import <OpentokReactNative/RNOpentokReactNativeSpec.h>
-#import <OpentokReactNative-Swift.h>
-
+#import <UIKit/UIKit.h>
 
 using namespace facebook::react;
-
-
 
 @interface OTPublisherViewNativeComponentView
     : RCTViewComponentView <RCTOTPublisherViewNativeViewProtocol>
@@ -55,7 +52,7 @@ using namespace facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         _impl = [[OTPublisherViewNativeImpl alloc] initWithView:self];
-         self.contentView = nil;
+        self.contentView = nil;
     }
     return self;
 }
@@ -145,20 +142,22 @@ using namespace facebook::react;
 
 - (void)handleAudioNetworkStats:(NSString *)jsonString {
     if (_eventEmitter) {
-        auto eventEmitter = std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
+        auto eventEmitter =
+            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
+                _eventEmitter);
         OTPublisherViewNativeEventEmitter::OnAudioNetworkStats payload{
-            .jsonStats = std::string([jsonString UTF8String])
-        };
+            .jsonStats = std::string([jsonString UTF8String])};
         eventEmitter->onAudioNetworkStats(std::move(payload));
     }
 }
 
 - (void)handleVideoNetworkStats:(NSString *)jsonString {
     if (_eventEmitter) {
-        auto eventEmitter = std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(_eventEmitter);
+        auto eventEmitter =
+            std::static_pointer_cast<const OTPublisherViewNativeEventEmitter>(
+                _eventEmitter);
         OTPublisherViewNativeEventEmitter::OnVideoNetworkStats payload{
-            .jsonStats = std::string([jsonString UTF8String])
-        };
+            .jsonStats = std::string([jsonString UTF8String])};
         eventEmitter->onVideoNetworkStats(std::move(payload));
     }
 }

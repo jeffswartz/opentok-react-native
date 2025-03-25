@@ -66,7 +66,7 @@ export default class OTPublisher extends React.Component {
         });
     } else {
       if (isConnected) {
-        OT.publish(this.state.publisherId);
+      //  OT.publish(this.state.publisherId);
       }
     }
   };

@@ -28,7 +28,8 @@ import React
         settings.iceConfig = Utils.sanitizeIceServer(sessionOptions["customServers"] as Any, sessionOptions["transportPolicy"] as Any, sessionOptions["includeServers"] as Any);
         settings.singlePeerConnection = Utils.sanitizeBooleanProperty(sessionOptions["enableSinglePeerConnection"] as Any);
         sessionDelegateHandler = SessionDelegateHandler(impl: self)
-        OTRN.sharedState.sessions.updateValue(OTSession(apiKey: apiKey, sessionId: sessionId, delegate: sessionDelegateHandler, settings: settings)!, forKey: sessionId);
+     otSession = OTSession(apiKey: apiKey, sessionId: sessionId, delegate: sessionDelegateHandler, settings: settings)
+     OTRN.sharedState.sessions.updateValue(otSession!, forKey: sessionId);
     }
 
 
