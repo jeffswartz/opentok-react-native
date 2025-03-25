@@ -7,7 +7,7 @@ import { addEventListener } from './helpers/OTSessionHelper';
 import OTSubscriberView from './OTSubscriberView';
 import {
   // sanitizeSubscriberEvents,
-  sanitizeProperties,
+  // sanitizeProperties,
   sanitizeFrameRate,
   sanitizeResolution,
   sanitizeAudioVolume,
@@ -28,25 +28,6 @@ export default class OTSubscriber extends Component {
       streams: [],
       subscribeToSelf: props.subscribeToSelf || false,
     };
-    /*
-    this.componentEvents = {
-      streamDestroyed:
-        Platform.OS === 'android'
-          ? 'session:onStreamDropped'
-          : 'session:streamDestroyed',
-      streamCreated:
-        Platform.OS === 'android'
-          ? 'session:onStreamReceived'
-          : 'session:streamCreated',
-      captionReceived:
-        Platform.OS === 'android'
-          ? 'session:onCaptionText'
-          : 'subscriber:subscriberCaptionReceived:',
-      publisherStreamCreated: 'publisherStreamCreated',
-      publisherStreamDestroyed: 'publisherStreamDestroyed',
-    };
-    this.componentEventsArray = Object.values(this.componentEvents);
-    */
     this.otrnEventHandler = getOtrnErrorEventHandler(this.props.eventHandlers);
     this.initComponent();
   }
@@ -59,37 +40,17 @@ export default class OTSubscriber extends Component {
 
   initComponent = () => {
     const { eventHandlers } = this.props;
-    // const { sessionId } = this.context;
     addEventListener('streamCreated', this.streamCreatedHandler);
     addEventListener(
       'publisherStreamCreated',
       this.publisherStreamCreatedHandler
     );
+    addEventListener(
+      'publisherStreamDestroyed',
+      this.publisherStreamDestroyedHandler
+    );
     addEventListener('streamDestroyed', this.streamDestroyedHandler);
     addEventListener('subscriberConnected', this.subscriberConnectedHandler);
-    /*
-    if (sessionId) {
-      this.streamCreated = nativeEvents.addListener(
-        `${sessionId}:${this.componentEvents.streamCreated}`,
-        (stream) => this.streamCreatedHandler(stream)
-      );
-      this.streamDestroyed = nativeEvents.addListener(
-        `${sessionId}:${this.componentEvents.streamDestroyed}`,
-        (stream) => this.streamDestroyedHandler(stream)
-      );
-      const subscriberEvents = sanitizeSubscriberEvents(eventHandlers);
-      OT.setJSComponentEvents(this.componentEventsArray);
-      setNativeEvents(subscriberEvents);
-    }
-    this.publisherStreamCreated = addEventListener(
-      'publisherStreamCreated',
-      (stream) => this.publisherStreamCreatedHandler(stream)
-    );
-    this.publisherStreamDestroyed = addEventListener(
-      'publisherStreamDestroyed',
-      (stream) => this.publisherStreamDestroyedHandler(stream)
-    );
-    */
   };
   componentDidUpdate() {
     const { streamProperties } = this.props;
@@ -140,64 +101,32 @@ export default class OTSubscriber extends Component {
       this.setState({ streamProperties });
     }
   }
-  componentWillUnmount() {
-    /*
-    this.streamCreated.remove();
-    this.streamDestroyed.remove();
-    this.publisherStreamCreated.remove();
-    this.publisherStreamDestroyed.remove();
-    OT.removeJSComponentEvents(this.componentEventsArray);
-    const events = sanitizeSubscriberEvents(this.props.eventHandlers);
-    removeNativeEvents(events);
-    */
-  }
   publisherStreamCreatedHandler = (stream) => {
-    return;
     if (this.props.subscribeToSelf) {
       this.streamCreatedHandler(stream);
     }
   };
   streamCreatedHandler = (stream) => {
+    /*
     const { subscribeToSelf, streamProperties, properties } = this.props;
-    // const { sessionId } = this.context;
     const subscriberProperties = streamProperties[stream.streamId]
       ? sanitizeProperties(streamProperties[stream.streamId])
       : sanitizeProperties(properties);
-    // Subscribe to streams. If subscribeToSelf is true, subscribe also to his own stream
-    const sessionInfoConnectionId =
-      this.sessionInfo && this.sessionInfo.connection
-        ? this.sessionInfo.connection.connectionId
-        : null;
-    if (subscribeToSelf || sessionInfoConnectionId !== stream.connectionId) {
-      this.setState({
-        streams: [...this.state.streams, stream.streamId],
-      });
-      /*
-      OT.subscribeToStream(stream.streamId, sessionId, subscriberProperties)
-        .catch((error) => {
-          // todo
-          //this.otrnEventHandler(error);
-        })
-        .then(() => {
-          this.setState({
-            streams: [...this.state.streams, stream.streamId],
-          });
-        });
-        */
-    }
+    */
+    this.setState((prevState) => ({
+      streams: [...prevState.streams, stream.streamId],
+    }));
   };
   streamDestroyedHandler = (stream) => {
-    /*
+    this.setState((prevState) => {
+      const indexOfStream = prevState.streams.indexOf(stream.streamId);
+      const newState = prevState.streams.splice(indexOfStream, 1);
+      return newState;
+    });
+    /* TODO
     OT.removeSubscriber(stream.streamId, (error) => {
       if (error) {
         this.otrnEventHandler(error);
-      } else {
-        const indexOfStream = this.state.streams.indexOf(stream.streamId);
-        const newState = this.state.streams.slice();
-        newState.splice(indexOfStream, 1);
-        this.setState({
-          streams: newState,
-        });
       }
     });
     */
@@ -207,18 +136,11 @@ export default class OTSubscriber extends Component {
     this.dispatchLocalEvent('subscriberConnected', event);
   };
 
-  /**
-  publisherStreamCreatedHandler = (stream) => {
-    if (this.state.subscribeToSelf) {
-      this.streamCreatedHandler(stream);
-    }
-  };
   publisherStreamDestroyedHandler = (stream) => {
     if (this.state.subscribeToSelf) {
       this.streamDestroyedHandler(stream);
     }
   };
-  */
   getRtcStatsReport() {
     OT.getSubscriberRtcStatsReport();
   }
@@ -242,6 +164,7 @@ export default class OTSubscriber extends Component {
             streamId={streamId}
             sessionId={this.sessionId}
             style={style}
+            {...this.props.properties}
           />
         );
       });

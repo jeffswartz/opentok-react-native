@@ -25,7 +25,8 @@ function App(): React.JSX.Element {
     setSubscribeToVideo((val) => !val);
   };
   const logAllEvents = false;
-  const useIndividualSubscriberViews = true;
+  const useIndividualSubscriberViews = false;
+  const subscribeToSelf = true;
 
   React.useEffect(() => {
     setInterval(() => {
@@ -113,6 +114,10 @@ function App(): React.JSX.Element {
           key="subscriber"
           sessionId={sessionId}
           style={styles.subscriber}
+          subscribeToSelf={subscribeToSelf}
+          properties={{
+            subscribeToVideo,
+          }}
         >
           {useIndividualSubscriberViews
             ? (streamIds) => {

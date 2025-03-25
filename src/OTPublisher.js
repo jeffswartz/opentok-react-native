@@ -95,6 +95,7 @@ export default class OTPublisher extends React.Component {
           this.dispatchLocalEvent('streamCreated', event);
         }}
         onStreamDestroyed={(event) => {
+          dispatchEvent('publisherStreamDestroyed', event);
           this.dispatchLocalEvent('streamDestroyed', event);
         }}
         onAudioLevel={(event) => {
