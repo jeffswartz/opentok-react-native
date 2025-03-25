@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { isNull, isUndefined, each, isEqual, isEmpty } from 'underscore';
+// import { isNull, isUndefined, each, isEqual, isEmpty } from 'underscore';
+import { each, isEqual } from 'underscore';
 import { OT } from './OT';
 import { addEventListener } from './helpers/OTSessionHelper';
 import OTSubscriberView from './OTSubscriberView';
@@ -13,14 +14,14 @@ import {
   sanitizeAudioVolume,
 } from './helpers/OTSubscriberHelper';
 import {
-  getOtrnErrorEventHandler,
+  // getOtrnErrorEventHandler,
   sanitizeBooleanProperty,
 } from './helpers/OTHelper';
 import OTContext from './contexts/OTContext';
 
 export default class OTSubscriber extends Component {
   sessionId = this.context.sessionId;
-  sessionInfo = this.context.sessionInfo;
+  // sessionInfo = this.context.sessionInfo;
 
   constructor(props, context) {
     super(props, context);
@@ -28,18 +29,11 @@ export default class OTSubscriber extends Component {
       streams: [],
       subscribeToSelf: props.subscribeToSelf || false,
     };
-    this.otrnEventHandler = getOtrnErrorEventHandler(this.props.eventHandlers);
+    // this.otrnEventHandler = getOtrnErrorEventHandler(this.props.eventHandlers);
     this.initComponent();
   }
 
-  dispatchLocalEvent(type, event) {
-    if (this.props.eventHandlers && this.props.eventHandlers[type]) {
-      this.props.eventHandlers[type](event);
-    }
-  }
-
   initComponent = () => {
-    const { eventHandlers } = this.props;
     addEventListener('streamCreated', this.streamCreatedHandler);
     addEventListener(
       'publisherStreamCreated',
@@ -133,7 +127,7 @@ export default class OTSubscriber extends Component {
   };
 
   subscriberConnectedHandler = (event) => {
-    this.dispatchLocalEvent('subscriberConnected', event);
+    this.props.eventHandlers?.subscriberConnected?.(event.nativeEvent);
   };
 
   publisherStreamDestroyedHandler = (stream) => {

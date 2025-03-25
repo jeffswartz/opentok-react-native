@@ -9,39 +9,33 @@ import OTContext from './contexts/OTContext';
 export default class OTSession extends Component {
   eventHandlers = {};
 
-  dispatchLocalEvent(type, event) {
-    if (this.props.eventHandlers && this.props.eventHandlers[type]) {
-      this.props.eventHandlers[type](event);
-    }
-  }
-
   async initSession(apiKey, sessionId, token) {
     OT.onSessionConnected((event) => {
       this.connectionId = event.connectionId;
       this.eventHandlers.sessionConnected(event);
       setIsConnected(true);
-      this.dispatchLocalEvent('sessionConnected', event);
+      this.props.eventHandlers?.sessionConnected?.(event.nativeEvent);
       if (Object.keys(this.props.signal).length > 0) {
         this.signal(this.props.signal);
       }
     });
     OT.initSession(apiKey, sessionId, {});
     OT.onStreamCreated((event) => {
-      this.dispatchLocalEvent('streamCreated', event);
+      this.props.eventHandlers?.streamCreated?.(event.nativeEvent);
       dispatchEvent('streamCreated', event);
     });
 
     OT.onStreamDestroyed((event) => {
-      this.dispatchLocalEvent('streamDestroyed', event);
+      this.props.eventHandlers?.streamDestroyed?.(event.nativeEvent);
       dispatchEvent('streamDestroyed', event);
     });
 
     OT.onSignalReceived((event) => {
-      this.dispatchLocalEvent('signal', event);
+      this.props.eventHandlers?.signal?.(event.nativeEvent);
     });
 
     OT.onSessionError((event) => {
-      this.dispatchLocalEvent('error', event);
+      this.props.eventHandlers?.error?.(event.nativeEvent);
     });
     OT.connect(sessionId, token);
   }
