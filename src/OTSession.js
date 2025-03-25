@@ -12,31 +12,57 @@ export default class OTSession extends Component {
   async initSession(apiKey, sessionId, token) {
     OT.onSessionConnected((event) => {
       this.connectionId = event.connectionId;
-      this.eventHandlers.sessionConnected(event);
+      this.eventHandlers?.sessionConnected(event);
       setIsConnected(true);
-      this.props.eventHandlers?.sessionConnected?.(event.nativeEvent);
+      this.eventHandlers?.sessionConnected?.(event);
       if (Object.keys(this.props.signal).length > 0) {
         this.signal(this.props.signal);
       }
     });
     OT.initSession(apiKey, sessionId, {});
     OT.onStreamCreated((event) => {
-      this.props.eventHandlers?.streamCreated?.(event.nativeEvent);
+      this.eventHandlers?.streamCreated?.(event);
       dispatchEvent('streamCreated', event);
     });
 
     OT.onStreamDestroyed((event) => {
-      this.props.eventHandlers?.streamDestroyed?.(event.nativeEvent);
+      this.eventHandlers?.streamDestroyed?.(event);
       dispatchEvent('streamDestroyed', event);
     });
 
     OT.onSignalReceived((event) => {
-      this.props.eventHandlers?.signal?.(event.nativeEvent);
+      this.eventHandlers?.signal?.(event);
     });
 
     OT.onSessionError((event) => {
-      this.props.eventHandlers?.error?.(event.nativeEvent);
+      this.eventHandlers?.error?.(event);
     });
+
+    OT.onConnectionCreated((event) => {
+      this.eventHandlers?.connectionCreated?.(event);
+    });
+    OT.onConnectionDestroyed((event) => {
+      this.eventHandlers?.connectionDestroyed?.(event);
+    });
+    OT.onArchiveStarted((event) => {
+      this.eventHandlers?.archiveStarted?.(event);
+    });
+    OT.onArchiveStopped((event) => {
+      this.eventHandlers?.archiveStopped?.(event);
+    });
+    OT.onMuteForced((event) => {
+      this.eventHandlers?.muteForced?.(event);
+    });
+    OT.onSessionReconnecting((event) => {
+      this.eventHandlers?.sessionReconnecting?.(event);
+    });
+    OT.onSessionReconnected((event) => {
+      this.eventHandlers?.sessionReconnected?.(event);
+    });
+    OT.onStreamPropertyChanged((event) => {
+      this.eventHandlers?.streamPropertyChanged?.(event);
+    });
+
     OT.connect(sessionId, token);
   }
 
@@ -48,8 +74,6 @@ export default class OTSession extends Component {
 
   initComponent = () => {
     this.initSession(this.props.apiKey, this.props.sessionId, this.props.token);
-    this.eventHandlers.sessionConnected =
-      this.props.eventHandlers?.sessionConnected;
   };
 
   signal(signalObj) {

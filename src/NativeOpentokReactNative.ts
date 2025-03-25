@@ -16,9 +16,7 @@ export type Connection = {
 
 export type ConnectionEvent = {
   sessionId: string;
-  connectionId: string;
-  creationTime?: string;
-  data?: string;
+  connection: Connection;
 };
 
 export type EmptyEvent = {};
@@ -123,7 +121,7 @@ export interface Spec extends TurboModule {
   readonly onMuteForced: EventEmitter<MuteForcedEvent>;
   readonly onSessionConnected: EventEmitter<SessionConnectEvent>;
   readonly onSessionDisconnected: EventEmitter<SessionDisconnectEvent>;
-  readonly onSessionDidBeginReconnecting: EventEmitter<EmptyEvent>;
+  readonly onSessionReconnecting: EventEmitter<EmptyEvent>;
   readonly onSessionReconnected: EventEmitter<EmptyEvent>;
   readonly onStreamCreated: EventEmitter<StreamEvent>;
   readonly onStreamDestroyed: EventEmitter<StreamEvent>;
