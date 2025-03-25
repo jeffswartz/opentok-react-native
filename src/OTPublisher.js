@@ -108,7 +108,9 @@ export default class OTPublisher extends React.Component {
           this.props.eventHandlers?.videoDisableWarning?.(event.nativeEvent);
         }}
         onVideoDisableWarningLifted={(event) => {
-          this.props.eventHandlers?.videoDisableWarningLifted?.(event.nativeEvent);
+          this.props.eventHandlers?.videoDisableWarningLifted?.(
+            event.nativeEvent
+          );
         }}
         onVideoEnabled={(event) => {
           this.props.eventHandlers?.videoEnabled?.(event.nativeEvent);
