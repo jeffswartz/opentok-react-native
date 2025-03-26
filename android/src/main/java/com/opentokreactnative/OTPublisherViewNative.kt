@@ -189,7 +189,7 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
           putString("streamId", stream.streamId)
         }
       emitOpenTokEvent("onStreamDestroyed", payload)
-    TODO ("Do we need to add to sharedState")
+    TODO ("Do we need to remove from sharedState")
   }
 
   override fun onError(publisher: PublisherKit, opentokError: OpentokError) {

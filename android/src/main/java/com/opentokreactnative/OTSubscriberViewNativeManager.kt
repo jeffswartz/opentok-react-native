@@ -41,6 +41,38 @@ class OTSubscriberViewNativeManager(context: ReactApplicationContext) : SimpleVi
     view.setSubscribeToVideo(value)
   }
 
+  @ReactProp(name = "subscribeToCaptions")
+  override fun setSubscribeToCaptions(
+    view: OTSubscriberViewNative?,
+    value: Boolean
+  ) {
+    view?.setSubscribeToCaptions(value)
+  }
+
+  @ReactProp(name = "audioVolume")
+  override fun setAudioVolume(
+    view: OTSubscriberViewNative?,
+    value: Double
+  ) {
+    view?.setAudioVolume(value)
+  }
+
+  @ReactProp(name = "preferredFrameRate")
+  override fun setPreferredFrameRate(
+    view: OTSubscriberViewNative?,
+    value: Int
+  ) {
+    view?.setPreferredFrameRate(value)
+  }
+
+  @ReactProp(name = "preferredResolution")
+  override fun setPreferredResolution(
+    view: OTSubscriberViewNative?,
+    value: String?
+  ) {
+    view?.setPreferredResolution(value)
+  }
+
   companion object {
     const val REACT_CLASS = "OTSubscriberViewNative"
   }

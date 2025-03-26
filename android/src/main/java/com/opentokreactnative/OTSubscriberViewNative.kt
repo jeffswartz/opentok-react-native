@@ -17,6 +17,7 @@ import com.opentok.android.Subscriber
 import com.opentok.android.SubscriberKit
 import com.opentok.android.SubscriberKit.SubscriberListener
 import com.opentok.android.SubscriberKit.SubscriberRtcStatsReportListener
+import com.opentok.android.VideoUtils
 
 class OTSubscriberViewNative: FrameLayout, SubscriberListener,
   SubscriberRtcStatsReportListener, SubscriberKit.AudioLevelListener,
@@ -74,16 +75,33 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
 
   public fun setSubscribeToAudio(value: Boolean) {
     subscribeToAudio = value
-    subscriber?.setSubscribeToAudio(value)
+      subscriber?.subscribeToAudio = value
   }
 
   public fun setSubscribeToVideo(value: Boolean) {
     subscribeToVideo = value
-    subscriber?.setSubscribeToVideo(value)
+      subscriber?.subscribeToVideo = value
   }
 
   public fun setStreamId(str: String?) {
     streamId = str
+  }
+
+  fun setSubscribeToCaptions(value: Boolean) {
+    subscriber?.subscribeToCaptions = value
+  }
+
+  fun setAudioVolume(value: Double) {
+    subscriber?.audioVolume = value
+  }
+
+  fun setPreferredFrameRate(value: Int) {
+    subscriber?.preferredFrameRate = value.toFloat()
+  }
+
+  fun setPreferredResolution(value: String?) {
+    //size: VideoUtils.VideoSiz
+    //subscriber?.preferredResolution = value
   }
 
   fun subscribeToStream(session: Session, stream: Stream) {
@@ -95,13 +113,11 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
     )
     subscriber?.setSubscriberListener(this)
     subscriber?.setRtcStatsReportListener(this)
-    /*
     subscriber?.setCaptionsListener(this)
     subscriber?.setAudioStatsListener(this)
     subscriber?.setVideoStatsListener(this)
     subscriber?.setVideoListener(this)
     subscriber?.setStreamListener(this)
-    */
     subscriber?.setSubscribeToAudio(subscribeToAudio)
     subscriber?.setSubscribeToVideo(subscribeToVideo)
     // FrameLayout mubscriberViewContainer = FrameLayout(context);
@@ -122,34 +138,32 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
     }
   }
 
-
   override fun onConnected(subscriber: SubscriberKit) {
       val payload =
         Arguments.createMap().apply {
           putString("streamId", stream!!.streamId)
         }
       emitOpenTokEvent("onSubscriberConnected", payload)
+    TODO ("Do we need to add to sharedState")
+
   }
 
   override fun onDisconnected(subscriber: SubscriberKit) {
-    /*
       val payload =
         Arguments.createMap().apply {
           putString("streamId", subscriber.getStream().streamId)
         }
       emitOpenTokEvent("onSubscriberDisconnected", payload)
-    */
+    TODO ("Do we need to remove from sharedState")
   }
 
   override fun onError(subscriber: SubscriberKit, opentokError: OpentokError) {
-    /*
       val payload =
         Arguments.createMap().apply {
           putString("streamId", subscriber.getStream().streamId)
           putString("errorMessage", opentokError.message)
         }
       emitOpenTokEvent("onSubscriberError", payload)
-    */
   }
 
   override fun onRtcStatsReport(subscriber: SubscriberKit, jsonArrayOfReports: String) {
@@ -160,44 +174,79 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
       emitOpenTokEvent("onRtcStatsReport", payload)
   }
 
-  override fun onAudioLevelUpdated(p0: SubscriberKit?, p1: Float) {
+  override fun onAudioLevelUpdated(subscriber: SubscriberKit?, audioLevel: Float) {
+    val payload =
+      Arguments.createMap().apply {
+        putDouble("audioLevel", audioLevel.toDouble())
+      }
+    emitOpenTokEvent("onAudioLevelUpdated", payload)
+  }
+
+  override fun onCaptionText(subscriber: SubscriberKit?, text: String?, isFinal: Boolean) {
+    val payload =
+      Arguments.createMap().apply {
+        putString("text", text);
+        putBoolean("isFinal", isFinal);
+      }
+    emitOpenTokEvent("onCaptionReceived", payload)
+  }
+
+  override fun onAudioStats(subscriber: SubscriberKit?, stats: SubscriberKit.SubscriberAudioStats?) {
     TODO("Not yet implemented")
   }
 
-  override fun onCaptionText(p0: SubscriberKit?, p1: String?, p2: Boolean) {
+  override fun onVideoStats(subscriber: SubscriberKit?, stats: SubscriberKit.SubscriberVideoStats?) {
     TODO("Not yet implemented")
   }
 
-  override fun onAudioStats(p0: SubscriberKit?, p1: SubscriberKit.SubscriberAudioStats?) {
-    TODO("Not yet implemented")
+  override fun onVideoDataReceived(subscriber: SubscriberKit?) {
+    val payload =
+      Arguments.createMap().apply {
+        putString("streamId", subscriber?.getStream()?.streamId)
+      }
+    emitOpenTokEvent("onVideoDataReceived", payload)
   }
 
-  override fun onVideoStats(p0: SubscriberKit?, p1: SubscriberKit.SubscriberVideoStats?) {
-    TODO("Not yet implemented")
+  override fun onVideoDisabled(subscriber: SubscriberKit?, reason: String?) {
+    val payload =
+      Arguments.createMap().apply {
+        putString("streamId", subscriber?.getStream()?.streamId)
+        putString("reason", reason)
+      }
+    emitOpenTokEvent("onVideoDisabled", payload)
   }
 
-  override fun onVideoDataReceived(p0: SubscriberKit?) {
-    TODO("Not yet implemented")
+  override fun onVideoEnabled(subscriber: SubscriberKit?, reason: String?) {
+    val payload =
+      Arguments.createMap().apply {
+        putString("streamId", subscriber?.getStream()?.streamId)
+        putString("reason", reason)
+      }
+    emitOpenTokEvent("onVideoEnabled", payload)
   }
 
-  override fun onVideoDisabled(p0: SubscriberKit?, p1: String?) {
-    TODO("Not yet implemented")
+  override fun onVideoDisableWarning(subscriber: SubscriberKit?) {
+    val payload =
+      Arguments.createMap().apply {
+        putString("streamId", subscriber?.getStream()?.streamId)
+      }
+    emitOpenTokEvent("onVideoDisableWarning", payload)
   }
 
-  override fun onVideoEnabled(p0: SubscriberKit?, p1: String?) {
-    TODO("Not yet implemented")
+  override fun onVideoDisableWarningLifted(subscriber: SubscriberKit?) {
+    val payload =
+      Arguments.createMap().apply {
+        putString("streamId", subscriber?.getStream()?.streamId)
+      }
+    emitOpenTokEvent("onVideoDisableWarningLifted", payload)
   }
 
-  override fun onVideoDisableWarning(p0: SubscriberKit?) {
-    TODO("Not yet implemented")
-  }
-
-  override fun onVideoDisableWarningLifted(p0: SubscriberKit?) {
-    TODO("Not yet implemented")
-  }
-
-  override fun onReconnected(p0: SubscriberKit?) {
-    TODO("Not yet implemented")
+  override fun onReconnected(subscriber: SubscriberKit?) {
+    val payload =
+      Arguments.createMap().apply {
+        putString("streamId", subscriber?.getStream()?.streamId)
+      }
+    emitOpenTokEvent("onReconnected", payload)
   }
 
   inner class OpenTokEvent(
@@ -207,7 +256,6 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
       private val payload: WritableMap
   ) : Event<OpenTokEvent>(surfaceId, viewId) {
     override fun getEventName() = name
-
     override fun getEventData() = payload
   }
 

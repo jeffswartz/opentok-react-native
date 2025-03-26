@@ -36,12 +36,12 @@ export interface NativeProps extends ViewProps {
   streamId: string;
   subscribeToAudio?: boolean;
   subscribeToVideo?: boolean;
-  /*
+  
   subscribeToCaptions?: boolean;
   audioVolume?: Double;
   preferredFrameRate?: Int32;
   preferredResolution?: string;
-  */
+  
   onSubscriberConnected?: BubblingEventHandler<StreamEvent> | null;
   onSubscriberDisconnected?: BubblingEventHandler<StreamEvent> | null;
   onStreamDestroyed?: BubblingEventHandler<StreamEvent> | null;
