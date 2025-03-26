@@ -126,8 +126,8 @@ import React
     }
 
     @objc public func setSubscribeToAudio(_ subscribeToAudio: Bool) {
-        guard let streamId = self.streamId,
-            let subscriber = OTRN.sharedState.subscribers[streamId]
+
+        guard let subscriber = OTRN.sharedState.subscribers[streamId ?? ""]
         else {
             return
         }
@@ -135,12 +135,11 @@ import React
     }
 
     @objc public func setSubscribeToVideo(_ subscribeToVideo: Bool) {
-        guard let streamId = self.streamId,
-            let subscriber = OTRN.sharedState.subscribers[streamId]
-        else {
-            return
-        }
+
+        guard let subscriber = OTRN.sharedState.subscribers[streamId ?? ""]
+        else { return }
         subscriber.subscribeToVideo = subscribeToVideo
+
     }
 
     deinit {
@@ -166,31 +165,48 @@ private class SubscriberDelegateHandler: NSObject, OTSubscriberDelegate {
     }
 
     func subscriberDidConnect(toStream subscriber: OTSubscriberKit) {
-        impl?.strictUIViewContainer?.handleSubscriberConnected([
-            "streamId": subscriber.stream?.streamId ?? ""
-        ])
+        if let stream = subscriber.stream {
+            let streamInfo: [String: Any] = EventUtils.prepareJSStreamEventData(
+                stream)
+            impl?.strictUIViewContainer?.handleSubscriberConnected(streamInfo)
+
+        } else {
+            impl?.strictUIViewContainer?.handleSubscriberConnected([:])
+        }
     }
 
     func subscriber(
         _ subscriber: OTSubscriberKit, didFailWithError error: OTError
     ) {
-        impl?.strictUIViewContainer?.handleError([
-            "streamId": subscriber.stream?.streamId ?? "",
-            "errorMessage": error.localizedDescription,
-        ])
+        var subscriberInfo: [String: Any] = [:]
+        subscriberInfo["error"] = EventUtils.prepareJSErrorEventData(error)
+        guard let stream = subscriber.stream else {
+            impl?.strictUIViewContainer?.handleError(subscriberInfo)
+            return
+        }
+        subscriberInfo["stream"] = EventUtils.prepareJSStreamEventData(stream)
+        impl?.strictUIViewContainer?.handleError(subscriberInfo)
+
     }
 
     func subscriberDidDisconnect(fromStream subscriber: OTSubscriberKit) {
-        impl?.strictUIViewContainer?.handleStreamDestroyed([
-            "streamId": subscriber.stream?.streamId ?? ""
-        ])
+        var subscriberInfo: [String: Any] = [:]
+        guard let stream = subscriber.stream else {
+            impl?.strictUIViewContainer?
+                .handleStreamDestroyed(subscriberInfo)
+
+            return
+        }
+        subscriberInfo["stream"] = EventUtils.prepareJSStreamEventData(stream)
+        impl?.strictUIViewContainer?.handleStreamDestroyed(subscriberInfo)
     }
 
     func subscriber(
         _ subscriber: OTSubscriberKit, rtcStatsReport jsonArrayOfReports: String
     ) {
-        impl?.strictUIViewContainer?.handleRtcStatsReport([
-            "jsonArrayOfReports": jsonArrayOfReports
-        ])
+        // TODO
+        //        impl?.strictUIViewContainer?.handleRtcStatsReport([
+        //            "jsonArrayOfReports": jsonArrayOfReports
+        //        ])
     }
 }
