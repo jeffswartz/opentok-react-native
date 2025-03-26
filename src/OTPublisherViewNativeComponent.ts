@@ -1,5 +1,9 @@
 import type { HostComponent, ViewProps } from 'react-native';
-import type { BubblingEventHandler, Int32, Double, Float } from 'react-native/Libraries/Types/CodegenTypes';
+import type {
+  BubblingEventHandler,
+  Int32,
+  Float,
+} from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 
 export type StreamEvent = {
@@ -14,7 +18,7 @@ export type ErrorEvent = {
 export type EmptyEvent = {};
 
 export type PublisherVideoNetworkStats = {
-  jsonStats: string;  // JSON string containing all video stats
+  jsonStats: string; // JSON string containing all video stats
 };
 
 export type PublisherVideoNetworkStatsEvent = PublisherVideoNetworkStats[];
@@ -24,14 +28,13 @@ export type AudioLevelEvent = {
 };
 
 export type AudioNetworkStatsEvent = {
-  jsonStats: string;  // JSON string containing all audio stats
+  jsonStats: string; // JSON string containing all audio stats
 };
 
 export type PublisherRTCStatsReport = {
   connectionId: string;
   jsonArrayOfReports: string;
 };
-
 
 export type PublisherRTCStatsReportEvent = PublisherRTCStatsReport[];
 
@@ -55,7 +58,7 @@ export interface NativeProps extends ViewProps {
   videoTrack?: boolean;
   videoSource?: string;
   videoContentHint?: string;
-  
+
   onError?: BubblingEventHandler<ErrorEvent> | null;
   onStreamCreated?: BubblingEventHandler<StreamEvent> | null;
   onStreamDestroyed?: BubblingEventHandler<StreamEvent> | null;

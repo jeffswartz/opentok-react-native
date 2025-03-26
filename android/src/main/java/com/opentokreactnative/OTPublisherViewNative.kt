@@ -18,13 +18,21 @@ import com.opentok.android.PublisherKit
 import com.opentok.android.PublisherKit.PublisherListener
 // import com.opentok.android.PublisherKit.PublisherRtcStatsReportListener
 
-class OTPublisherViewNative: FrameLayout, PublisherListener {
+class OTPublisherViewNative: FrameLayout, PublisherListener,
+  PublisherKit.AudioLevelListener,
+  PublisherKit.PublisherRtcStatsReportListener,
+  PublisherKit.AudioStatsListener,
+  PublisherKit.MuteListener,
+  PublisherKit.VideoStatsListener,
+  PublisherKit.VideoListener {
   private var session: Session? = null
   private var sessionId: String?= ""
   private var publisherId: String?= ""
   private var publishAudio = true
   private var publishVideo = true
+  private var publishCaptions = false
   private var audioBitRate = 40000
+  private var audioFallbackEnabled = true
   private var subscriberAudioFallback = true
   private var publisherAudioFallback = true
   private var publisher: Publisher? = null
@@ -76,6 +84,11 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
     publisher?.setPublishAudio(value)
   }
 
+  public fun setPublishCaptions(value: Boolean) {
+    publishCaptions = value
+    publisher?.setPublishCaptions(value)
+  }
+
   public fun setPublishVideo(value: Boolean) {
     publishVideo = value
     publisher?.setPublishVideo(value)
@@ -83,6 +96,11 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
 
   public fun setAudioBitrate(value: Int) {
     audioBitRate = value
+  }
+
+  public fun setAudioFallbackEnabled(value: Boolean) {
+    audioFallbackEnabled = value
+    publisher?.setAudioFallbackEnabled(value)
   }
 
   public fun setPublisherAudioFallback(value: Boolean) {
@@ -140,9 +158,19 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
         BaseVideoRenderer.STYLE_VIDEO_FILL
     )
     publisher?.setPublisherListener(this)
-    // publisher?.setRtcStatsReportListener(this)
+    /*
+    publisher?.setAudioLevelListener(this)
+    publisher?.setAudioStatsListener(this)
+    publisher?.setMuteListener(this)
+    publisher?.setRtcStatsReportListener(this)
+    publisher?.setVideoListener(this)
+    publisher?.setVideoStatsListener(this)
+    */
     publisher?.setPublishAudio(publishAudio)
     publisher?.setPublishVideo(publishVideo)
+    publisher?.setPublishCaptions(publishCaptions)
+    publisher?.setAudioFallbackEnabled(audioFallbackEnabled)
+    publisher?.setAudioFallbackEnabled(audioFallbackEnabled)
 
     sharedState.getPublishers().put(publisherId?: return, publisher?: return);
     if (publisher?.view != null) {
@@ -203,6 +231,42 @@ class OTPublisherViewNative: FrameLayout, PublisherListener {
       emitOpenTokEvent("onRtcStatsReport", statsArrayMap)
   }
   */
+
+  override fun onAudioLevelUpdated(p0: PublisherKit?, p1: Float) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onRtcStatsReport(p0: PublisherKit?, p1: Array<out PublisherKit.PublisherRtcStats>?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onAudioStats(p0: PublisherKit?, p1: Array<out PublisherKit.PublisherAudioStats>?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onMuteForced(p0: PublisherKit?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onVideoStats(p0: PublisherKit?, p1: Array<out PublisherKit.PublisherVideoStats>?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onVideoDisabled(p0: PublisherKit?, p1: String?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onVideoEnabled(p0: PublisherKit?, p1: String?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onVideoDisableWarning(p0: PublisherKit?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onVideoDisableWarningLifted(p0: PublisherKit?) {
+    TODO("Not yet implemented")
+  }
 
   inner class OpenTokEvent(
       surfaceId: Int,
