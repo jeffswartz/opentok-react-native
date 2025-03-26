@@ -66,7 +66,7 @@ export default class OTPublisher extends React.Component {
         });
     } else {
       if (isConnected) {
-      //  OT.publish(this.state.publisherId);
+        //  OT.publish(this.state.publisherId);
       }
     }
   };
@@ -87,7 +87,7 @@ export default class OTPublisher extends React.Component {
       <OTPublisherViewNative
         sessionId={this.props.sessionId}
         publisherId={this.state.publisherId}
-        {...this.publisherProperties} 
+        {...this.publisherProperties}
         onError={(event) => {
           this.dispatchEvent('error', event);
         }}
