@@ -3,20 +3,22 @@ package com.opentokreactnative
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.FrameLayout;
+import android.widget.FrameLayout
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.bridge.WritableArray
+
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.Event
 import com.opentok.android.BaseVideoRenderer
 import com.opentok.android.OpentokError
-import com.opentok.android.Session
-import com.opentok.android.Stream
 import com.opentok.android.Publisher
 import com.opentok.android.PublisherKit
 import com.opentok.android.PublisherKit.PublisherListener
-// import com.opentok.android.PublisherKit.PublisherRtcStatsReportListener
+import com.opentok.android.Session
+import com.opentok.android.Stream
+import com.opentokreactnative.utils.Utils
 
 class OTPublisherViewNative: FrameLayout, PublisherListener,
   PublisherKit.AudioLevelListener,
@@ -146,14 +148,12 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
         BaseVideoRenderer.STYLE_VIDEO_FILL
     )
     publisher?.setPublisherListener(this)
-    /*
     publisher?.setAudioLevelListener(this)
     publisher?.setAudioStatsListener(this)
     publisher?.setMuteListener(this)
-    publisher?.setRtcStatsReportListener(this)
+    //publisher?.setRtcStatsReportListener(this)
     publisher?.setVideoListener(this)
     publisher?.setVideoStatsListener(this)
-    */
     publisher?.setPublishAudio(publishAudio)
     publisher?.setPublishVideo(publishVideo)
 
@@ -180,16 +180,16 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
           putString("streamId", stream!!.streamId)
         }
       emitOpenTokEvent("onStreamCreated", payload)
+    TODO ("Do we need to add to sharedState")
   }
 
   override fun onStreamDestroyed(publisher: PublisherKit, stream: Stream) {
-    /*
-      val payload =
+    val payload =
         Arguments.createMap().apply {
-          putString("streamId", subscriber.getStream().streamId)
+          putString("streamId", stream.streamId)
         }
       emitOpenTokEvent("onStreamDestroyed", payload)
-    */
+    TODO ("Do we need to add to sharedState")
   }
 
   override fun onError(publisher: PublisherKit, opentokError: OpentokError) {
@@ -212,45 +212,87 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
           pushMap(statMap);
         }
       }
-
       emitOpenTokEvent("onRtcStatsReport", statsArrayMap)
   }
   */
 
-  override fun onAudioLevelUpdated(p0: PublisherKit?, p1: Float) {
+  override fun onAudioLevelUpdated(publisher: PublisherKit?, audioLevel: Float) {
+    val publisherId = Utils.getPublisherId(publisher)
+    if (publisherId.isNotEmpty()) {
+      val payload =
+        Arguments.createMap().apply {
+          putDouble("audioLevel", audioLevel.toDouble())
+        }
+      emitOpenTokEvent("onAudioLevelUpdated", payload)
+    }
+  }
+
+  override fun onRtcStatsReport(publisher: PublisherKit?, stats: Array<out PublisherKit.PublisherRtcStats>?) {
     TODO("Not yet implemented")
   }
 
-  override fun onRtcStatsReport(p0: PublisherKit?, p1: Array<out PublisherKit.PublisherRtcStats>?) {
-    TODO("Not yet implemented")
+  override fun onAudioStats(publisher: PublisherKit?, stats: Array<out PublisherKit.PublisherAudioStats>?) {
+    val publisherId = Utils.getPublisherId(publisher)
+    if (publisherId.isNotEmpty()) {
+      val statsArrayMap: WritableArray = Arguments.createArray()
+      for (stat in stats!!) {
+        val audioStats: WritableMap = Arguments.createMap()
+        audioStats.putString("connectionId", stat.connectionId)
+        audioStats.putString("subscriberId", stat.subscriberId)
+        audioStats.putDouble("audioPacketsLost", stat.audioPacketsLost.toDouble())
+        audioStats.putDouble("audioPacketsSent", stat.audioPacketsSent.toDouble())
+        audioStats.putDouble("audioBytesSent", stat.audioBytesSent.toDouble())
+        audioStats.putDouble("startTime", stat.startTime)
+        statsArrayMap.pushMap(audioStats)
+      }
+      val payload =
+        Arguments.createMap().apply {
+          putArray("stats", statsArrayMap)
+        }
+      emitOpenTokEvent("onAudioNetworkStats", payload)
+    }
   }
 
-  override fun onAudioStats(p0: PublisherKit?, p1: Array<out PublisherKit.PublisherAudioStats>?) {
-    TODO("Not yet implemented")
+  override fun onMuteForced(publisher: PublisherKit?) {
+    emitOpenTokEvent("onMuteForced", Arguments.createMap())
   }
 
-  override fun onMuteForced(p0: PublisherKit?) {
-    TODO("Not yet implemented")
+  override fun onVideoStats(publisher: PublisherKit?, stats: Array<out PublisherKit.PublisherVideoStats>?) {
+    val publisherId = Utils.getPublisherId(publisher)
+    if (publisherId.isNotEmpty()) {
+      val statsArrayMap: WritableArray = Arguments.createArray()
+      for (stat in stats!!) {
+        val audioStats: WritableMap = Arguments.createMap()
+        audioStats.putString("connectionId", stat.connectionId)
+        audioStats.putString("subscriberId", stat.subscriberId)
+        audioStats.putDouble("videoPacketsLost", stat.videoPacketsLost.toDouble())
+        audioStats.putDouble("videoBytesSent", stat.videoBytesSent.toDouble())
+        audioStats.putDouble("videoPacketsSent", stat.videoPacketsSent.toDouble())
+        audioStats.putDouble("startTime", stat.startTime)
+        statsArrayMap.pushMap(audioStats)
+      }
+      val payload =
+        Arguments.createMap().apply {
+          putArray("stats", statsArrayMap)
+        }
+      emitOpenTokEvent("onVideoNetworkStats", payload)
+    }
   }
 
-  override fun onVideoStats(p0: PublisherKit?, p1: Array<out PublisherKit.PublisherVideoStats>?) {
-    TODO("Not yet implemented")
+  override fun onVideoDisabled(publisher: PublisherKit?, reason: String?) {
+    emitOpenTokEvent("onVideoDisabled", Arguments.createMap())
   }
 
-  override fun onVideoDisabled(p0: PublisherKit?, p1: String?) {
-    TODO("Not yet implemented")
+  override fun onVideoEnabled(publisher: PublisherKit?, reason: String?) {
+    emitOpenTokEvent("onVideoEnabled", Arguments.createMap())
   }
 
-  override fun onVideoEnabled(p0: PublisherKit?, p1: String?) {
-    TODO("Not yet implemented")
+  override fun onVideoDisableWarning(publisher: PublisherKit?) {
+    emitOpenTokEvent("onVideoDisableWarning", Arguments.createMap())
   }
 
-  override fun onVideoDisableWarning(p0: PublisherKit?) {
-    TODO("Not yet implemented")
-  }
-
-  override fun onVideoDisableWarningLifted(p0: PublisherKit?) {
-    TODO("Not yet implemented")
+  override fun onVideoDisableWarningLifted(publisher: PublisherKit?) {
+    emitOpenTokEvent("onVideoDisableWarningLifted", Arguments.createMap())
   }
 
   inner class OpenTokEvent(
@@ -260,7 +302,6 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
       private val payload: WritableMap
   ) : Event<OpenTokEvent>(surfaceId, viewId) {
     override fun getEventName() = name
-
     override fun getEventData() = payload
   }
 
