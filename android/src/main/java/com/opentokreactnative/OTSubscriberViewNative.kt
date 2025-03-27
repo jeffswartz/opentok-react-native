@@ -56,7 +56,6 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
   private fun configureComponent(context: Context) {
     var params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)  
     this.setLayoutParams(params)
-    // this.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
   }
 
   fun emitOpenTokEvent(name: String, payload: WritableMap) {
@@ -104,21 +103,11 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
     */
     subscriber?.setSubscribeToAudio(subscribeToAudio)
     subscriber?.setSubscribeToVideo(subscribeToVideo)
-    // FrameLayout mubscriberViewContainer = FrameLayout(context);
 
     session.subscribe(subscriber)
     if (subscriber?.view != null) {
-      subscriber?.view?.layoutParams = LayoutParams(1000, 1000)
       this.addView(subscriber?.view)
       requestLayout()
-      val subscriberView = subscriber?.view
-      if (subscriberView != null) {
-        subscriberView.measure(
-          View.MeasureSpec.makeMeasureSpec(subscriberView.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
-          View.MeasureSpec.makeMeasureSpec(subscriberView.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
-        subscriberView.layout(subscriberView.getLeft(), subscriberView.getTop(), 640, 480)
-        // subscriberView.layout(subscriberView.getLeft(), subscriberView.getTop(), subscriberView.getRight(), subscriberView.getBottom())
-      }
     }
   }
 

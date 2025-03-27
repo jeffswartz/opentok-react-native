@@ -59,7 +59,6 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
   private fun configureComponent(context: Context) {
     var params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)  
     this.setLayoutParams(params)
-    // this.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
   }
 
   fun emitOpenTokEvent(name: String, payload: WritableMap) {
@@ -174,17 +173,8 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
 
     sharedState.getPublishers().put(publisherId?: return, publisher?: return);
     if (publisher?.view != null) {
-      publisher?.view?.layoutParams = LayoutParams(1000, 1000)
       this.addView(publisher?.view)
       requestLayout()
-      val publisherView = publisher?.view
-      if (publisherView != null) {
-        publisherView.measure(
-          View.MeasureSpec.makeMeasureSpec(publisherView.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
-          View.MeasureSpec.makeMeasureSpec(publisherView.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
-        publisherView.layout(publisherView.getLeft(), publisherView.getTop(), 640, 480)
-        // publisherView.layout(publisherView.getLeft(), publisherView.getTop(), publisherView.getRight(), publisherView.getBottom())
-      }
     }
   }
 
