@@ -33,7 +33,9 @@ class OTPublisherViewNative : FrameLayout, PublisherListener,
     private var publisherId: String? = ""
     private var publishAudio = true
     private var publishVideo = true
+    private var publishCaptions = false
     private var audioBitRate = 40000
+    private var audioFallbackEnabled = true
     private var subscriberAudioFallback = true
     private var publisherAudioFallback = true
     private var publisher: Publisher? = null
@@ -94,8 +96,18 @@ class OTPublisherViewNative : FrameLayout, PublisherListener,
         publisher?.setPublishVideo(value)
     }
 
+    public fun setPublishCaptions(value: Boolean) {
+        publishCaptions = value
+        publisher?.setPublishCaptions(value)
+    }
+
     public fun setAudioBitrate(value: Int) {
         audioBitRate = value
+    }
+
+    public fun setAudioFallbackEnabled(value: Boolean) {
+        audioFallbackEnabled = value
+        publisher?.setAudioFallbackEnabled(value)
     }
 
     public fun setPublisherAudioFallback(value: Boolean) {

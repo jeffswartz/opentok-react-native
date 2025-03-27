@@ -43,6 +43,16 @@ class OTPublisherViewNativeManager(context: ReactApplicationContext) :
         view.setPublishVideo(value)
     }
 
+    @ReactProp(name = "publishCaptions")
+    override public fun setPublishCaptions(view: OTPublisherViewNative, value: Boolean) {
+        view.setPublishCaptions(value)
+    }
+
+    @ReactProp(name = "audioFallbackEnabled")
+    override public fun setAudioFallbackEnabled(view: OTPublisherViewNative, value: Boolean) {
+        view.setAudioFallbackEnabled(value)
+    }
+
     @ReactProp(name = "audioBitrate")
     override public fun setAudioBitrate(view: OTPublisherViewNative, value: Int) {
         view.setAudioBitrate(value)
