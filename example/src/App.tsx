@@ -9,11 +9,9 @@ import {
 } from 'opentok-react-native';
 
 function App(): React.JSX.Element {
-  const apiKey = '472032';
-  const sessionId =
-    '1_MX40NzIwMzJ-fjE3MzM0NTAzOTcyNjh-L0FQMkR0K2tVc214ajJOVzZiYWtYclg1fn5-';
-  const token =
-    'T1==cGFydG5lcl9pZD00NzIwMzImc2lnPTE1MjljMDVlNTVkOGNjMDNiYjZjOGRiZTM5ZDRkMGViYTY4ZWQ4N2M6c2Vzc2lvbl9pZD0xX01YNDBOekl3TXpKLWZqRTNNek0wTlRBek9UY3lOamgtTDBGUU1rUjBLMnRWYzIxNGFqSk9WelppWVd0WWNsZzFmbjUtJmNyZWF0ZV90aW1lPTE3NDI0MzExNzMmbm9uY2U9MC45ODUzMTY5Mzc1MzM4NDA0JnJvbGU9bW9kZXJhdG9yJmV4cGlyZV90aW1lPTE3NDUwMjMxNzE1NjgmaW5pdGlhbF9sYXlvdXRfY2xhc3NfbGlzdD0=';
+  const apiKey = '';
+  const sessionId = '';
+  const token = '';
 
   const [streamIds, setStreamIds] = React.useState<string[]>([]);
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
@@ -25,8 +23,8 @@ function App(): React.JSX.Element {
     setSubscribeToVideo((val) => !val);
   };
   const logAllEvents = false;
-  const useIndividualSubscriberViews = false;
-  const subscribeToSelf = true;
+  const useIndividualSubscriberViews = true;
+  const subscribeToSelf = false;
 
   React.useEffect(() => {
     setInterval(() => {
@@ -37,7 +35,7 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaView style={styles.flex1}>
       <Text style={styles.text}>
-        SubscribeToVideo: {subscribeToVideo.toString()}
+        Show videos: {subscribeToVideo.toString()}
       </Text>
       <OTSession
         apiKey={apiKey}
@@ -161,9 +159,6 @@ function App(): React.JSX.Element {
             : null}
         </OTSubscriber>
       </OTSession>
-      <Text style={styles.text}>
-        Stream count: {streamIds.length.toString()}
-      </Text>
     </SafeAreaView>
   );
 }
@@ -175,8 +170,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   videoview: {
-    width: '50%',
-    height: '50%',
+    width: 320,
+    height: 240,
   },
   session: {
     display: 'flex',
