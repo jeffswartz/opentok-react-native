@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   videoview: {
-    width: '50%',
-    height: '50%',
+    width: 320,
+    height: 240,
   },
   session: {
     display: 'flex',
