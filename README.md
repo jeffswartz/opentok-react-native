@@ -93,7 +93,7 @@ See the system requirements for the [OpenTok Android SDK](https://tokbox.com/dev
 
 When you create an archive of your app, the [privacy manifest settings required by Apple's App store](https://developer.apple.com/support/third-party-SDK-requirements) are added automatically with this version of the OpenTok React Native SDK.
 
-3. If your app will use the `OTPublisher.setVideoTransformers()` or `OTPublisher.setAudioTransformers()` method, you need to include the following in your Podfile:
+4. If your app will use the `OTPublisher.setVideoTransformers()` or `OTPublisher.setAudioTransformers()` method, you need to include the following in your Podfile:
 
    ```
    pod 'VonageClientSDKVideoTransformers'
