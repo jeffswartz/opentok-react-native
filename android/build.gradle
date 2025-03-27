@@ -102,7 +102,6 @@ dependencies {
   implementation "com.facebook.react:react-android:0.78.0"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'com.opentok.android:opentok-android-sdk:2.28.3'
-  //implementation 'com.facebook.react:react-native:0.77.0'
 }
 
 if (isNewArchitectureEnabled()) {

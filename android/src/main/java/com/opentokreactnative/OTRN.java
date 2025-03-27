@@ -4,6 +4,7 @@ import com.opentok.android.Session;
 import com.opentok.android.Stream;
 import com.opentok.android.Subscriber;
 import com.opentok.android.Publisher;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OTRN {
@@ -42,5 +43,6 @@ public class OTRN {
         return this.publishers;
     }
 
-    private OTRN() {}
+    private OTRN() {
+    }
 }

@@ -161,14 +161,14 @@ public final class EventUtils {
         WritableMap codecsMap = Arguments.createMap();
         WritableArray videoDecoderCodecsArray = Arguments.createArray();
         WritableArray videoEncoderCodecsArray = Arguments.createArray();
-        for (MediaUtils.VideoCodecType decoderCodec : supportedCodecs.videoDecoderCodecs ) {
+        for (MediaUtils.VideoCodecType decoderCodec : supportedCodecs.videoDecoderCodecs) {
             if (decoderCodec.equals(MediaUtils.VideoCodecType.VIDEO_CODEC_H264)) {
                 videoDecoderCodecsArray.pushString("H.264");
             } else {
                 videoDecoderCodecsArray.pushString("VP8");
             }
         }
-        for (MediaUtils.VideoCodecType encoderCodec : supportedCodecs.videoEncoderCodecs ) {
+        for (MediaUtils.VideoCodecType encoderCodec : supportedCodecs.videoEncoderCodecs) {
             if (encoderCodec.equals(MediaUtils.VideoCodecType.VIDEO_CODEC_H264)) {
                 videoEncoderCodecsArray.pushString("H.264");
             } else {
