@@ -22,7 +22,7 @@ function App(): React.JSX.Element {
     setSubscribeToVideo((val) => !val);
   };
   const logAllEvents = false;
-  const useIndividualSubscriberViews = true;
+  const useIndividualSubscriberViews = false;
   const subscribeToSelf = false;
 
   React.useEffect(() => {
