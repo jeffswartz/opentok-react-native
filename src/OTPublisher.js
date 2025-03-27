@@ -19,12 +19,17 @@ export default class OTPublisher extends React.Component {
 
   constructor(props) {
     super(props);
-    this.eventHandlers = props.eventHandlers;
-    this.initComponent(props.eventHandlers);
+    const mergedProperties = {
+      ...OTPublisher.defaultProps.properties,
+      ...props.properties,
+    };
     this.state = {
       publisherId: uuid.v4(),
-      publishVideo: props.properties.publishVideo,
+      publishVideo: mergedProperties.publishVideo,
     };
+    this.eventHandlers = props.eventHandlers;
+    this.publisherProperties = sanitizeProperties(mergedProperties);
+    this.initComponent(props.eventHandlers);
   }
 
   onSessionConnected = () => {
@@ -66,7 +71,7 @@ export default class OTPublisher extends React.Component {
         });
     } else {
       if (isConnected) {
-        OT.publish(this.state.publisherId);
+        //  OT.publish(this.state.publisherId);
       }
     }
   };
@@ -81,6 +86,7 @@ export default class OTPublisher extends React.Component {
       <OTPublisherViewNative
         sessionId={this.context.sessionId}
         publisherId={this.state.publisherId}
+        {...this.publisherProperties}
         onError={(event) => {
           this.props.eventHandlers?.error?.(event.nativeEvent);
         }}
