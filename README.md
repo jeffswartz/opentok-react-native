@@ -30,6 +30,7 @@ The following features are unsupported in this alpha version:
 
 * `OTPublisher rtcStatsReport` event
 * Screen-sharing (`OTPublisher.videoSource 'screen'`)
+* Some `OTSubscriber` events
 
 Some event properties are missing.
 
