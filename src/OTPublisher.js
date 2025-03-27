@@ -53,14 +53,14 @@ export default class OTPublisher extends React.Component {
       checkAndroidPermissions(audioTrack, videoTrack, isScreenSharing)
         .then(() => {
           if (isConnected()) {
-            setTimeout(() => OT.publish(this.state.publisherId), 10);
+            setTimeout(() => OT.publish(this.state.publisherId), 0);
           }
         })
         .catch((error) => {
           // this.otrnEventHandler(error);
         });
     } else {
-      if (isConnected) {
+      if (isConnected()) {
         OT.publish(this.state.publisherId);
       }
     }

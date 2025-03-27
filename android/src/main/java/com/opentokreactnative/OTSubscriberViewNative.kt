@@ -2,6 +2,7 @@ package com.opentokreactnative
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout;
 import com.facebook.react.bridge.Arguments
@@ -35,6 +36,9 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
   private var subscriber: Subscriber? = null
   private var sharedState = OTRN.getSharedState();
 
+  private var TAG = this.javaClass.simpleName
+
+
   constructor(context: Context) : super(context) {
     configureComponent(context)
   }
@@ -56,8 +60,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
 
   private fun configureComponent(context: Context) {
     var params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)  
-    this.setLayoutParams(params)
-    // this.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+    //this.setLayoutParams(params)
   }
 
   fun emitOpenTokEvent(name: String, payload: WritableMap) {
@@ -105,6 +108,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
   }
 
   fun subscribeToStream(session: Session, stream: Stream) {
+    Log.d(TAG, "subscribeToStream: ")
     subscriber = Subscriber.Builder(context, stream).build()
     sharedState.getSubscribers().put(stream.getStreamId(), subscriber?: return);
     subscriber?.setStyle(
@@ -120,7 +124,6 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
     subscriber?.setStreamListener(this)
     subscriber?.setSubscribeToAudio(subscribeToAudio)
     subscriber?.setSubscribeToVideo(subscribeToVideo)
-    // FrameLayout mubscriberViewContainer = FrameLayout(context);
 
     session.subscribe(subscriber)
     if (subscriber?.view != null) {
@@ -128,23 +131,25 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
       this.addView(subscriber?.view)
       requestLayout()
       val subscriberView = subscriber?.view
+
       if (subscriberView != null) {
         subscriberView.measure(
           View.MeasureSpec.makeMeasureSpec(subscriberView.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
           View.MeasureSpec.makeMeasureSpec(subscriberView.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
         subscriberView.layout(subscriberView.getLeft(), subscriberView.getTop(), 640, 480)
-        // subscriberView.layout(subscriberView.getLeft(), subscriberView.getTop(), subscriberView.getRight(), subscriberView.getBottom())
+        subscriberView.layout(subscriberView.getLeft(), subscriberView.getTop(), subscriberView.getRight(), subscriberView.getBottom())
       }
     }
   }
 
   override fun onConnected(subscriber: SubscriberKit) {
+    Log.d(TAG, "onConnected: "  )
       val payload =
         Arguments.createMap().apply {
           putString("streamId", stream!!.streamId)
         }
       emitOpenTokEvent("onSubscriberConnected", payload)
-    TODO ("Do we need to add to sharedState")
+    // TODO ("Do we need to add to sharedState")
 
   }
 
@@ -153,8 +158,8 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
         Arguments.createMap().apply {
           putString("streamId", subscriber.getStream().streamId)
         }
-      emitOpenTokEvent("onSubscriberDisconnected", payload)
-    TODO ("Do we need to remove from sharedState")
+     // emitOpenTokEvent("onSubscriberDisconnected", payload)
+    // TODO ("Do we need to remove from sharedState")
   }
 
   override fun onError(subscriber: SubscriberKit, opentokError: OpentokError) {
@@ -163,7 +168,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
           putString("streamId", subscriber.getStream().streamId)
           putString("errorMessage", opentokError.message)
         }
-      emitOpenTokEvent("onSubscriberError", payload)
+       //emitOpenTokEvent("onSubscriberError", payload)
   }
 
   override fun onRtcStatsReport(subscriber: SubscriberKit, jsonArrayOfReports: String) {
@@ -171,7 +176,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
         Arguments.createMap().apply {
           putString("jsonArrayOfReports", jsonArrayOfReports)
         }
-      emitOpenTokEvent("onRtcStatsReport", payload)
+      // emitOpenTokEvent("onRtcStatsReport", payload)
   }
 
   override fun onAudioLevelUpdated(subscriber: SubscriberKit?, audioLevel: Float) {
@@ -179,7 +184,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
       Arguments.createMap().apply {
         putDouble("audioLevel", audioLevel.toDouble())
       }
-    emitOpenTokEvent("onAudioLevelUpdated", payload)
+     //emitOpenTokEvent("onAudioLevelUpdated", payload)
   }
 
   override fun onCaptionText(subscriber: SubscriberKit?, text: String?, isFinal: Boolean) {
@@ -188,15 +193,15 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
         putString("text", text);
         putBoolean("isFinal", isFinal);
       }
-    emitOpenTokEvent("onCaptionReceived", payload)
+     //emitOpenTokEvent("onCaptionReceived", payload)
   }
 
   override fun onAudioStats(subscriber: SubscriberKit?, stats: SubscriberKit.SubscriberAudioStats?) {
-    TODO("Not yet implemented")
+    // TODO("Not yet implemented")
   }
 
   override fun onVideoStats(subscriber: SubscriberKit?, stats: SubscriberKit.SubscriberVideoStats?) {
-    TODO("Not yet implemented")
+    // TODO("Not yet implemented")
   }
 
   override fun onVideoDataReceived(subscriber: SubscriberKit?) {
@@ -204,7 +209,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
       Arguments.createMap().apply {
         putString("streamId", subscriber?.getStream()?.streamId)
       }
-    emitOpenTokEvent("onVideoDataReceived", payload)
+     //emitOpenTokEvent("onVideoDataReceived", payload)
   }
 
   override fun onVideoDisabled(subscriber: SubscriberKit?, reason: String?) {
@@ -213,7 +218,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
         putString("streamId", subscriber?.getStream()?.streamId)
         putString("reason", reason)
       }
-    emitOpenTokEvent("onVideoDisabled", payload)
+    //emitOpenTokEvent("onVideoDisabled", payload)
   }
 
   override fun onVideoEnabled(subscriber: SubscriberKit?, reason: String?) {
@@ -222,7 +227,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
         putString("streamId", subscriber?.getStream()?.streamId)
         putString("reason", reason)
       }
-    emitOpenTokEvent("onVideoEnabled", payload)
+     //emitOpenTokEvent("onVideoEnabled", payload)
   }
 
   override fun onVideoDisableWarning(subscriber: SubscriberKit?) {
@@ -230,7 +235,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
       Arguments.createMap().apply {
         putString("streamId", subscriber?.getStream()?.streamId)
       }
-    emitOpenTokEvent("onVideoDisableWarning", payload)
+     //emitOpenTokEvent("onVideoDisableWarning", payload)
   }
 
   override fun onVideoDisableWarningLifted(subscriber: SubscriberKit?) {
@@ -238,7 +243,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
       Arguments.createMap().apply {
         putString("streamId", subscriber?.getStream()?.streamId)
       }
-    emitOpenTokEvent("onVideoDisableWarningLifted", payload)
+     //emitOpenTokEvent("onVideoDisableWarningLifted", payload)
   }
 
   override fun onReconnected(subscriber: SubscriberKit?) {
@@ -246,7 +251,7 @@ class OTSubscriberViewNative: FrameLayout, SubscriberListener,
       Arguments.createMap().apply {
         putString("streamId", subscriber?.getStream()?.streamId)
       }
-    emitOpenTokEvent("onReconnected", payload)
+     //emitOpenTokEvent("onReconnected", payload)
   }
 
   inner class OpenTokEvent(

@@ -2,6 +2,7 @@ package com.opentokreactnative
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import com.facebook.react.bridge.Arguments
@@ -37,6 +38,7 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
   private var publisherAudioFallback = true
   private var publisher: Publisher? = null
   private var sharedState = OTRN.getSharedState();
+  private var TAG = this.javaClass.simpleName
 
   constructor(context: Context) : super(context) {
     configureComponent(context)
@@ -57,9 +59,8 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
   }
 
   private fun configureComponent(context: Context) {
-    var params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)  
+    var params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     this.setLayoutParams(params)
-    // this.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
   }
 
   fun emitOpenTokEvent(name: String, payload: WritableMap) {
@@ -163,6 +164,7 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
       this.addView(publisher?.view)
       requestLayout()
       val publisherView = publisher?.view
+
       if (publisherView != null) {
         publisherView.measure(
           View.MeasureSpec.makeMeasureSpec(publisherView.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
@@ -170,17 +172,20 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
         publisherView.layout(publisherView.getLeft(), publisherView.getTop(), 640, 480)
         // publisherView.layout(publisherView.getLeft(), publisherView.getTop(), publisherView.getRight(), publisherView.getBottom())
       }
+
+
     }
   }
 
 
   override fun onStreamCreated(publisher: PublisherKit, stream: Stream) {
+    Log.d(TAG, "onStreamCreated: ")
       val payload =
         Arguments.createMap().apply {
           putString("streamId", stream!!.streamId)
         }
       emitOpenTokEvent("onStreamCreated", payload)
-    TODO ("Do we need to add to sharedState")
+    // TODO ("Do we need to add to sharedState")
   }
 
   override fun onStreamDestroyed(publisher: PublisherKit, stream: Stream) {
@@ -189,7 +194,7 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
           putString("streamId", stream.streamId)
         }
       emitOpenTokEvent("onStreamDestroyed", payload)
-    TODO ("Do we need to remove from sharedState")
+    // TODO ("Do we need to remove from sharedState")
   }
 
   override fun onError(publisher: PublisherKit, opentokError: OpentokError) {
@@ -223,12 +228,12 @@ class OTPublisherViewNative: FrameLayout, PublisherListener,
         Arguments.createMap().apply {
           putDouble("audioLevel", audioLevel.toDouble())
         }
-      emitOpenTokEvent("onAudioLevelUpdated", payload)
+      emitOpenTokEvent("onAudioLevel", payload)
     }
   }
 
   override fun onRtcStatsReport(publisher: PublisherKit?, stats: Array<out PublisherKit.PublisherRtcStats>?) {
-    TODO("Not yet implemented")
+    // TODO("Not yet implemented")
   }
 
   override fun onAudioStats(publisher: PublisherKit?, stats: Array<out PublisherKit.PublisherAudioStats>?) {
