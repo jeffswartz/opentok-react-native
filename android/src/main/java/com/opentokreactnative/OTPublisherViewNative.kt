@@ -59,6 +59,7 @@ class OTPublisherViewNative : FrameLayout, PublisherListener,
     }
 
     override fun onAttachedToWindow() {
+        Log.d(TAG, "onAttachedToWindow: ")
         session = sharedState.getSessions().get(sessionId)
         super.onAttachedToWindow()
         publishStream(session ?: return)
@@ -182,7 +183,7 @@ class OTPublisherViewNative : FrameLayout, PublisherListener,
     }
 
     override fun onStreamCreated(publisher: PublisherKit, stream: Stream) {
-        Log.d(TAG, "onStreamCreated: ")
+        Log.d(TAG, "onStreamCreated: " + stream.streamId)
         val payload =
             Arguments.createMap().apply {
                 putString("streamId", stream!!.streamId)
@@ -192,6 +193,7 @@ class OTPublisherViewNative : FrameLayout, PublisherListener,
     }
 
     override fun onStreamDestroyed(publisher: PublisherKit, stream: Stream) {
+        //Log.d(TAG, "onStreamDestroyed: " + stream?.streamId)
         val payload =
             Arguments.createMap().apply {
                 putString("streamId", stream.streamId)
@@ -268,6 +270,7 @@ class OTPublisherViewNative : FrameLayout, PublisherListener,
     }
 
     override fun onMuteForced(publisher: PublisherKit?) {
+        Log.d(TAG, "onMuteForced: " + publisher?.getStream()?.streamId)
         emitOpenTokEvent("onMuteForced", Arguments.createMap())
     }
 
@@ -297,18 +300,22 @@ class OTPublisherViewNative : FrameLayout, PublisherListener,
     }
 
     override fun onVideoDisabled(publisher: PublisherKit?, reason: String?) {
+        Log.d(TAG, "onVideoDisabled: " + publisher?.getStream()?.streamId)
         emitOpenTokEvent("onVideoDisabled", Arguments.createMap())
     }
 
     override fun onVideoEnabled(publisher: PublisherKit?, reason: String?) {
+        Log.d(TAG, "onVideoEnabled: " + publisher?.getStream()?.streamId)
         emitOpenTokEvent("onVideoEnabled", Arguments.createMap())
     }
 
     override fun onVideoDisableWarning(publisher: PublisherKit?) {
+        Log.d(TAG, "onVideoDisableWarning: " + publisher?.getStream()?.streamId)
         emitOpenTokEvent("onVideoDisableWarning", Arguments.createMap())
     }
 
     override fun onVideoDisableWarningLifted(publisher: PublisherKit?) {
+        Log.d(TAG, "onVideoDisableWarningLifted: " + publisher?.getStream()?.streamId)
         emitOpenTokEvent("onVideoDisableWarningLifted", Arguments.createMap())
     }
 
