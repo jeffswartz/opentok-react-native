@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text } from 'react-native';
 
 import {
   OTSession,
@@ -13,7 +13,6 @@ function App(): React.JSX.Element {
   const sessionId = '';
   const token = '';
 
-  const [streamIds, setStreamIds] = React.useState<string[]>([]);
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
   const [publishStream, setPublishStream] = React.useState<boolean>(false);
 
@@ -53,7 +52,6 @@ function App(): React.JSX.Element {
           },
           streamCreated: (event: any) => {
             console.log('streamCreated', event);
-            setStreamIds((prevIds) => [...prevIds, event.streamId]);
           },
           streamDestroyed: (event: any) =>
             console.log('streamDestroyed', event),
