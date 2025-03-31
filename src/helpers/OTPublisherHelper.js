@@ -136,7 +136,7 @@ const sanitizeProperties = (properties) => {
     scalableScreenshare: Boolean(properties.scalableScreenshare),
   };
 };
-
+/*
 const sanitizePublisherEvents = (publisherId, events) => {
   if (typeof events !== 'object') {
     return {};
@@ -173,5 +173,6 @@ const sanitizePublisherEvents = (publisherId, events) => {
   };
   return reassignEvents('publisher', customEvents, events, publisherId);
 };
+*/
 
-export { sanitizeProperties, sanitizePublisherEvents };
+export { sanitizeProperties };
