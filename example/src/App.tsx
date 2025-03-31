@@ -118,7 +118,7 @@ function App(): React.JSX.Element {
         <OTSubscriber
           key="subscriber"
           sessionId={sessionId}
-          style={styles.subscriber}
+          style={styles.videoview}
           subscribeToSelf={subscribeToSelf}
           properties={{
             subscribeToVideo,
@@ -172,9 +172,6 @@ const styles = StyleSheet.create({
     height: 240,
   },
   session: {
-    display: 'flex',
-  },
-  subscriber: {
     display: 'flex',
   },
 });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import PropTypes from 'prop-types';
 // import { isNull, isUndefined, each, isEqual, isEmpty } from 'underscore';
 import { each, isEqual } from 'underscore';
@@ -151,13 +151,11 @@ export default class OTSubscriber extends Component {
             ? this.props.style
             : streamProperties.style;
         */
-        const style = styles.videoview;
         return (
           <OTSubscriberView
             key={streamId}
             streamId={streamId}
             sessionId={this.sessionId}
-            style={style}
             {...this.props.properties}
           />
         );
@@ -167,13 +165,6 @@ export default class OTSubscriber extends Component {
     return this.props.children(this.state.streams) || null;
   }
 }
-
-const styles = StyleSheet.create({
-  videoview: {
-    width: '50%',
-    height: '50%',
-  },
-});
 
 const viewPropTypes = View.propTypes;
 OTSubscriber.propTypes = {
