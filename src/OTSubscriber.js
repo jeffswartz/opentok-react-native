@@ -151,11 +151,13 @@ export default class OTSubscriber extends Component {
             ? this.props.style
             : streamProperties.style;
         */
+        const style = this.props.style;
         return (
           <OTSubscriberView
             key={streamId}
             streamId={streamId}
             sessionId={this.sessionId}
+            style={style}
             {...this.props.properties}
           />
         );
