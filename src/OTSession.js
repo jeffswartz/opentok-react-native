@@ -4,15 +4,17 @@ import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import PropTypes from 'prop-types';
 import { OT } from './OT';
 import { dispatchEvent, setIsConnected } from './helpers/OTSessionHelper';
+import OTContext from './contexts/OTContext';
 
 export default class OTSession extends Component {
   eventHandlers = {};
 
   async initSession(apiKey, sessionId, token) {
     OT.onSessionConnected((event) => {
+      this.connectionId = event.connectionId;
       this.eventHandlers?.sessionConnected(event);
       setIsConnected(true);
-      dispatchEvent('sessionConnected', event);
+      this.eventHandlers?.sessionConnected?.(event);
       if (Object.keys(this.props.signal).length > 0) {
         this.signal(this.props.signal);
       }
@@ -20,16 +22,22 @@ export default class OTSession extends Component {
     OT.initSession(apiKey, sessionId, {});
     OT.onStreamCreated((event) => {
       this.eventHandlers?.streamCreated?.(event);
+      dispatchEvent('streamCreated', event);
     });
+
     OT.onStreamDestroyed((event) => {
-      this.eventHandlers?.onStreamDestroyed?.(event);
+      this.eventHandlers?.streamDestroyed?.(event);
+      dispatchEvent('streamDestroyed', event);
     });
+
     OT.onSignalReceived((event) => {
       this.eventHandlers?.signal?.(event);
     });
+
     OT.onSessionError((event) => {
       this.eventHandlers?.error?.(event);
     });
+
     OT.onConnectionCreated((event) => {
       this.eventHandlers?.connectionCreated?.(event);
     });
@@ -66,8 +74,6 @@ export default class OTSession extends Component {
 
   initComponent = () => {
     this.initSession(this.props.apiKey, this.props.sessionId, this.props.token);
-    this.eventHandlers.sessionConnected =
-      this.props.eventHandlers?.sessionConnected;
   };
 
   signal(signalObj) {
@@ -76,8 +82,15 @@ export default class OTSession extends Component {
 
   render() {
     const { style, children, sessionId, apiKey, token } = this.props;
+
     if (children && sessionId && apiKey && token) {
-      return <View style={style}>{children}</View>;
+      return (
+        <OTContext.Provider
+          value={{ sessionId, connectionId: this.connectionId }}
+        >
+          <View style={style}>{children}</View>
+        </OTContext.Provider>
+      );
     }
     return <View />;
   }

@@ -1,14 +1,18 @@
 import React, { useRef } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text } from 'react-native';
 
-import { OTSession, OTSubscriberView, OTPublisher } from 'opentok-react-native';
+import {
+  OTSession,
+  OTSubscriber,
+  OTSubscriberView,
+  OTPublisher,
+} from 'opentok-react-native';
 
 function App(): React.JSX.Element {
   const apiKey = '';
   const sessionId = '';
   const token = '';
 
-  const [streamIds, setStreamIds] = React.useState<string[]>([]);
   const [subscribeToVideo, setSubscribeToVideo] = React.useState<boolean>(true);
   const [publishStream, setPublishStream] = React.useState<boolean>(false);
 
@@ -18,6 +22,8 @@ function App(): React.JSX.Element {
     setSubscribeToVideo((val) => !val);
   };
   const logAllEvents = false;
+  const useIndividualSubscriberViews = false;
+  const subscribeToSelf = false;
 
   React.useEffect(() => {
     setInterval(() => {
@@ -28,7 +34,7 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaView style={styles.flex1}>
       <Text style={styles.text}>
-        SubscribeToVideo: {subscribeToVideo.toString()}
+        Show videos: {subscribeToVideo.toString()}
       </Text>
       <OTSession
         apiKey={apiKey}
@@ -46,7 +52,6 @@ function App(): React.JSX.Element {
           },
           streamCreated: (event: any) => {
             console.log('streamCreated', event);
-            setStreamIds((prevIds) => [...prevIds, event.streamId]);
           },
           streamDestroyed: (event: any) =>
             console.log('streamDestroyed', event),
@@ -110,34 +115,48 @@ function App(): React.JSX.Element {
           />
         ) : null}
 
-        <View key="subscriber" style={styles.subscriber}>
-          {streamIds?.map((streamId) => (
-            <OTSubscriberView
-              streamId={streamId}
-              sessionId={sessionId}
-              key={streamId}
-              ref={subscriberRef}
-              subscribeToVideo={subscribeToVideo}
-              subscribeToAudio={!subscribeToVideo}
-              style={styles.videoview}
-              eventHandlers={{
-                subscriberConnected: (event: any) => {
-                  console.log('subscriberConnected', event);
-                  setTimeout(() => {
-                    subscriberRef.current?.getRtcStatsReport();
-                  }, 4000);
-                },
-                onRtcStatsReport: (event: any) => {
-                  console.log('onRtcStatsReport', event);
-                },
-              }}
-            />
-          ))}
-        </View>
+        <OTSubscriber
+          key="subscriber"
+          sessionId={sessionId}
+          style={styles.videoview}
+          subscribeToSelf={subscribeToSelf}
+          properties={{
+            subscribeToVideo,
+          }}
+        >
+          {useIndividualSubscriberViews
+            ? (streamIds) => {
+                if (streamIds.length === 0) {
+                  return null;
+                }
+                return streamIds.map((streamId) => {
+                  return (
+                    <OTSubscriberView
+                      streamId={streamId}
+                      sessionId={sessionId}
+                      key={streamId}
+                      ref={subscriberRef}
+                      subscribeToVideo={subscribeToVideo}
+                      subscribeToAudio={!subscribeToVideo}
+                      style={styles.videoview}
+                      eventHandlers={{
+                        subscriberConnected: (event: any) => {
+                          console.log('subscriberConnected', event);
+                          setTimeout(() => {
+                            subscriberRef.current?.getRtcStatsReport();
+                          }, 4000);
+                        },
+                        onRtcStatsReport: (event: any) => {
+                          console.log('onRtcStatsReport', event);
+                        },
+                      }}
+                    />
+                  );
+                });
+              }
+            : null}
+        </OTSubscriber>
       </OTSession>
-      <Text style={styles.text}>
-        Stream count: {streamIds.length.toString()}
-      </Text>
     </SafeAreaView>
   );
 }
@@ -153,9 +172,6 @@ const styles = StyleSheet.create({
     height: 240,
   },
   session: {
-    display: 'flex',
-  },
-  subscriber: {
     display: 'flex',
   },
 });
