@@ -69,10 +69,8 @@ export default class OTPublisher extends React.Component {
         .catch((error) => {
           // this.otrnEventHandler(error);
         });
-    } else {
-      if (isConnected()) {
-        //OT.publish(this.state.publisherId);
-      }
+    } else if (isConnected()) {
+      setTimeout(() => OT.publish(this.state.publisherId), 100);
     }
   };
 
