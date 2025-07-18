@@ -31,8 +31,6 @@
     "!android/gradlew",
     "!android/gradlew.bat",
     "!android/local.properties",
-    "!android/generated/",
-    "!ios/generated/",
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
@@ -203,6 +201,7 @@
     "android": {
       "javaPackageName": "com.opentokreactnative"
     },
+    "includesGeneratedCode": true,
     "fabricEnabled": true
   },
   "create-react-native-library": {
