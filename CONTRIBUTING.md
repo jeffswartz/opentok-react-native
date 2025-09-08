@@ -1,45 +1,132 @@
-# Contributing Guidelines
+# Contributing
 
-If you're interested in contributing to this project, here are a few ways to do so:
+Contributions are always welcome, no matter how large or small!
 
-- Bug fixes
-  - If you find a bug, please first report it using Github Issues.
-  - Issues that have already been identified as a bug will be labelled `bug`.
-  - If you'd like to submit a fix for a bug, send a Pull Request from your own fork and mention the Issue number.
-    - Include a test that isolates the bug and verifies that it was fixed.
-- New Features
-  - If you'd like to add a feature to the library that doesn't already exist, feel free to describe the feature in a new Github Issue.
-  - Issues that have been identified as a feature request will be labelled `enhancement`.
-  - If you'd like to implement the new feature, please wait for feedback from the project maintainers before spending too much time writing the code. In some cases, `enhancement`s may not align well with the project objectives at the time.
-- Documentation & Miscellaneous
-  - If you think the documentation could be clearer, or you have an alternative
-    implementation of something that may have more advantages, we would love to hear it.
-    - If its a trivial change, go ahead and send a Pull Request with the changes you have in mind
-    - If not, open a Github Issue to discuss the idea first.
+We want this community to be friendly and respectful to each other. Please follow it in all your interactions with the project. Before contributing, please read the [code of conduct](./CODE_OF_CONDUCT.md).
 
-## Requirements
+## Development workflow
 
-For a contribution to be accepted:
+This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/features/workspaces). It contains the following packages:
 
-- Code must follow existing styling conventions
-- Commit messages must be descriptive. Related issues should be mentioned by number.
-- The [sample applications](https://github.com/opentok/opentok-react-native-samples) must build with your changes. 
+- The library package in the root directory.
+- An example app in the `example/` directory.
 
-If the contribution doesn't meet these criteria, a maintainer will discuss it with you on the Issue. You can still continue to add more commits to the branch you have sent the Pull Request from.
+To get started with the project, make sure you have the correct version of [Node.js](https://nodejs.org/) installed. See the [`.nvmrc`](./.nvmrc) file for the version used in this project.
 
-## How To
+Run `yarn` in the root directory to install the required dependencies for each package:
 
-1. Fork this repository on GitHub.
-2. Clone/fetch your fork to your local development machine.
-3. Create a new branch (e.g. `issue-12`, `feat.add_foo`, etc) and check it out.
-4. Make your changes and commit them.
-5. Test your changes with the [sample applications](https://github.com/opentok/opentok-react-native-samples). (you can use `npm pack` and `npm install` to install a local version of the library.)
-6. Push your new branch to your fork. (e.g. `git push myname issue-12`)
-7. Open a Pull Request from your new branch to the original fork's `master` branch.
+```sh
+yarn
+```
 
-## Development Guidelines
+> Since the project relies on Yarn workspaces, you cannot use [`npm`](https://github.com/npm/cli) for development without manually migrating.
 
-1. Follow [installation guidelines](README.md).
-2. Modify JS components in `src/js/`.
-3. Modify iOS components in `ios/`.
-4. Modify Android components in `android/`.
+The [example app](/example/) demonstrates usage of the library. You need to run it to test any changes you make.
+
+It is configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example app. Changes to the library's JavaScript code will be reflected in the example app without a rebuild, but native code changes will require a rebuild of the example app.
+
+If you want to use Android Studio or XCode to edit the native code, you can open the `example/android` or `example/ios` directories respectively in those editors. To edit the Objective-C or Swift files, open `example/ios/OpentokReactNativeExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > opentok-react-native`.
+
+To edit the Java or Kotlin files, open `example/android` in Android studio and find the source files at `opentok-react-native` under `Android`.
+
+You can use various commands from the root directory to work with the project.
+
+To start the packager:
+
+```sh
+yarn example start
+```
+
+To run the example app on Android:
+
+```sh
+yarn example android
+```
+
+To run the example app on iOS:
+
+```sh
+yarn example ios
+```
+
+To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
+
+```sh
+Running "OpentokReactNativeExample" with {"fabric":true,"initialProps":{"concurrentRoot":true},"rootTag":1}
+```
+
+Note the `"fabric":true` and `"concurrentRoot":true` properties.
+
+Make sure your code passes TypeScript and ESLint. Run the following to verify:
+
+```sh
+yarn typecheck
+yarn lint
+```
+
+To fix formatting errors, run the following:
+
+```sh
+yarn lint --fix
+```
+
+Remember to add tests for your change if possible. Run the unit tests by:
+
+```sh
+yarn test
+```
+
+### Commit message convention
+
+We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
+
+- `fix`: bug fixes, e.g. fix crash due to deprecated method.
+- `feat`: new features, e.g. add new method to the module.
+- `refactor`: code refactor, e.g. migrate from class components to hooks.
+- `docs`: changes into documentation, e.g. add usage example for the module.
+- `test`: adding or updating tests, e.g. add integration tests using detox.
+- `chore`: tooling changes, e.g. change CI config.
+
+Our pre-commit hooks verify that your commit message matches this format when committing.
+
+### Linting and tests
+
+[ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
+
+We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
+
+Our pre-commit hooks verify that the linter and tests pass when committing.
+
+### Publishing to npm
+
+We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
+
+To publish new versions, run the following:
+
+```sh
+yarn release
+```
+
+### Scripts
+
+The `package.json` file contains various scripts for common tasks:
+
+- `yarn`: setup project by installing dependencies.
+- `yarn typecheck`: type-check files with TypeScript.
+- `yarn lint`: lint files with ESLint.
+- `yarn test`: run unit tests with Jest.
+- `yarn example start`: start the Metro server for the example app.
+- `yarn example android`: run the example app on Android.
+- `yarn example ios`: run the example app on iOS.
+
+### Sending a pull request
+
+> **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github).
+
+When you're sending a pull request:
+
+- Prefer small pull requests focused on one change.
+- Verify that linters and tests are passing.
+- Review the documentation to make sure it looks good.
+- Follow the pull request template when opening a pull request.
+- For pull requests that change the API or implementation, discuss with maintainers first by opening an issue.
