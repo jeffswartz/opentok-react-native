@@ -17,9 +17,6 @@ Pod::Spec.new do |s|
   s.private_header_files = "ios/**/*.h"
   # Add OTXCFramework dependency
   s.dependency 'OTXCFramework', '2.30.1'
-  # Add VonageClientSDKVideoTransformers dependency
-  s.dependency 'VonageClientSDKVideoTransformers', '2.30.1'
-
 
   install_modules_dependencies(s)
 end

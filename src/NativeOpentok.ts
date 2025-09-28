@@ -156,6 +156,7 @@ export interface Spec extends TurboModule {
       canPublish: boolean;
       canSubscribe: boolean;
       canForceMute: boolean;
+      canForceDisconnect: boolean;
     }>
   >;
   reportIssue(sessionId: string): Promise<string>;
@@ -164,6 +165,7 @@ export interface Spec extends TurboModule {
     excludedStreamIds: string[]
   ): Promise<boolean>;
   forceMuteStream(sessionId: string, streamId: string): Promise<boolean>;
+  forceDisconnect(sessionId: string, connectionId: string): Promise<boolean>;
   disableForceMute(sessionId: string): Promise<boolean>;
 }
 
